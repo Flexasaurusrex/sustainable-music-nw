@@ -230,9 +230,13 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
 .hero__cue::after{content:"";position:absolute;inset:0;background:linear-gradient(var(--brass),transparent);animation:cue 2.1s ease-in-out infinite}
 @keyframes cue{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
 
-.booting .hero__title,.booting .hero__sub,.booting .hero__cta,.booting .hero__cue{opacity:0;transform:translateY(22px)}
+.hero__alt{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-top:22px;display:inline-block;transition:color .2s}
+.hero__alt:hover{color:var(--brass-text)}
+.hero__trust{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate-dim);margin-top:30px;display:flex;align-items:center;gap:9px;justify-content:center}
+.hero__trust::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brass);opacity:.8}
+.booting .hero__title,.booting .hero__sub,.booting .hero__cta,.booting .hero__alt,.booting .hero__trust,.booting .hero__cue{opacity:0;transform:translateY(22px)}
 .booting .hero__cue{transform:translate(-50%,22px)}
-.hero__title,.hero__sub,.hero__cta{transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.hero__title,.hero__sub,.hero__cta,.hero__alt,.hero__trust{transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
 .hero__seal{opacity:0;transform:scale(.06);filter:blur(16px) drop-shadow(0 30px 60px var(--shadow))}
 .hero__seal.play{animation:zoomIn 2.35s cubic-bezier(.16,.72,.16,1) forwards}
 @keyframes zoomIn{0%{opacity:0;transform:scale(.06) rotate(-9deg);filter:blur(16px) drop-shadow(0 30px 60px var(--shadow))}
@@ -285,6 +289,46 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
 .marquee__row span{font-family:var(--display);font-weight:700;font-style:italic;font-size:clamp(1.15rem,2.4vw,1.8rem);color:var(--panel-text);padding:0 30px;display:flex;align-items:center;gap:30px;white-space:nowrap;letter-spacing:-.01em}
 .marquee__row span::after{content:"◆";color:var(--brass);font-size:.5em;font-style:normal}
 @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============================================================
+   NEXT UP (urgency)
+   ============================================================ */
+.nextup{background:var(--card-bg);border-bottom:1px solid var(--line)}
+.nextup__in{display:flex;align-items:center;gap:clamp(16px,3vw,36px);padding-top:16px;padding-bottom:16px;flex-wrap:wrap}
+.nextup__l{display:flex;flex-direction:column;gap:3px;border-right:1px solid var(--line);padding-right:clamp(16px,3vw,32px)}
+.nextup__lab{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-text);display:flex;align-items:center;gap:8px}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--brass);box-shadow:0 0 0 0 rgba(232,193,90,.6);animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(232,193,90,.55)}70%{box-shadow:0 0 0 8px rgba(232,193,90,0)}100%{box-shadow:0 0 0 0 rgba(232,193,90,0)}}
+.nextup__cd{font-family:var(--display);font-weight:700;font-size:1.2rem;color:var(--cream)}
+.nextup__m{flex:1;min-width:190px;display:flex;flex-direction:column;gap:2px}
+.nextup__m h3{font-size:1.15rem}
+.nextup__m span{color:var(--slate);font-size:.9rem}
+.nextup__r{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:660px){.nextup__l{border-right:0;flex-direction:row;align-items:baseline;gap:12px;padding-right:0}.nextup__r{width:100%}.nextup__r .btn{flex:1;justify-content:center}}
+
+/* ============================================================
+   PROOF / TESTIMONIAL
+   ============================================================ */
+.proof{text-align:center}
+.quote{max-width:900px;margin:clamp(30px,5vw,52px) auto 0;position:relative}
+.quote p{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,3.3vw,2.5rem);line-height:1.32;letter-spacing:-.015em;color:var(--cream);margin:0}
+.quote b{color:var(--brass-text);font-weight:700;font-style:italic}
+.quote cite{display:block;margin-top:1.6rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);font-style:normal}
+.quote cite b{color:var(--brass-text);font-style:normal;font-weight:400}
+.proof__stats{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(16px,3vw,40px);max-width:940px;margin:clamp(46px,6vw,72px) auto 0;text-align:center}
+.proof__stats div{display:flex;flex-direction:column;gap:8px;position:relative}
+.proof__stats div+div::before{content:"";position:absolute;left:calc(-1 * clamp(8px,1.5vw,20px));top:15%;bottom:15%;width:1px;background:var(--line)}
+.proof__stats .n{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,3vw,2.3rem);color:var(--brass-text);line-height:1;letter-spacing:-.02em}
+.proof__stats .l{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
+@media(max-width:640px){.proof__stats{grid-template-columns:1fr 1fr;gap:30px 20px}.proof__stats div:nth-child(3)::before,.proof__stats div+div::before{display:none}}
+
+/* ============================================================
+   DONATE — frequency + selectable tiers
+   ============================================================ */
+.give__freq{display:inline-flex;border:1px solid rgba(232,193,90,.45);border-radius:3px;overflow:hidden;margin-bottom:22px;font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase}
+.give__freq button{background:transparent;border:0;color:var(--panel-mute);padding:10px 20px;cursor:pointer;transition:background .2s,color .2s}
+.give__freq button.on{background:var(--brass);color:#0a0a0b}
+.amt__per{font-size:.38em;color:var(--panel-mute);font-family:var(--mono);letter-spacing:.04em;margin-left:5px}
 
 /* ============================================================
    MISSION (home)
@@ -461,7 +505,11 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
 .give__cta h3{color:var(--panel-text);font-size:1.6rem;margin:0 0 10px}
 .give__cta p{color:var(--panel-mute);font-size:.98rem;margin:0 0 22px}
 .give__chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 22px}
-.give__chips span{font-family:var(--mono);font-size:.8rem;border:1px solid rgba(232,193,90,.4);color:var(--brass);border-radius:2px;padding:9px 15px}
+.give__chips button{position:relative;font-family:var(--mono);font-size:.82rem;border:1px solid rgba(232,193,90,.4);color:var(--brass);background:transparent;border-radius:2px;padding:12px 17px;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.give__chips button:hover{border-color:var(--brass)}
+.give__chips button.on{background:var(--brass);color:#0a0a0b;border-color:var(--brass)}
+.give__chips .pop{position:absolute;top:-9px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:.5rem;letter-spacing:.08em;background:var(--brass);color:#0a0a0b;padding:2px 7px;border-radius:2px}
+.give__chips button.on .pop{background:#0a0a0b;color:var(--brass)}
 .give__note{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-mute);margin-top:18px;line-height:1.8}
 
 /* ============================================================
@@ -538,8 +586,9 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     <p class="hero__sub">We put professional musicians, paid a fair union-scale wage, into the places Seattle already gathers. The result is a stronger, more connected neighborhood.</p>
     <div class="hero__cta">
       <a class="btn btn--solid" data-go="events">See upcoming events</a>
-      <a class="btn btn--ghost" href="#roster" data-scroll="roster">Join the artist roster</a>
     </div>
+    <a class="hero__alt" href="#roster" data-scroll="roster">Seattle musician? Join the roster →</a>
+    <p class="hero__trust">Backed by the Musicians' Association of Seattle, Local 76-493</p>
     <div class="hero__cue"></div>
   </header>
 
@@ -549,6 +598,14 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
       <span>Brewpubs</span><span>Block parties</span><span>Community gardens</span><span>Apartment courtyards</span><span>Corner parks</span><span>Farmers markets</span>
     </div>
   </div>
+
+  <section class="nextup" id="nextup" hidden>
+    <div class="wrap nextup__in">
+      <div class="nextup__l"><span class="nextup__lab"><i class="pulse"></i>Next up</span><span class="nextup__cd" id="nextupWhen"></span></div>
+      <div class="nextup__m"><h3 id="nextupTitle"></h3><span id="nextupMeta"></span></div>
+      <div class="nextup__r"><a class="btn btn--solid btn--sm" id="nextupBtn" target="_blank" rel="noopener">Details</a><a class="btn btn--ghost btn--sm" data-go="events">All events</a></div>
+    </div>
+  </section>
 
   <section class="band" id="mission">
     <div class="wrap">
@@ -561,9 +618,23 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     </div>
   </section>
 
-  <hr class="hair">
+  <section class="band band--night proof">
+    <div class="wrap">
+      <p class="eyebrow center reveal">From the neighborhood</p>
+      <blockquote class="quote reveal" style="--d:.05s">
+        <p>“One of the things that really stood out to me was the <b>strong sense of community and connection</b> it created. People were genuinely just happy to be there, and the music elevated the experience, as well as being professionally handled in all regards.”</p>
+        <cite>Louis Messmer, <b>attended a co-hosted event</b></cite>
+      </blockquote>
+      <div class="proof__stats reveal" style="--d:.1s">
+        <div><span class="n">30+</span><span class="l">Neighborhood shows</span></div>
+        <div><span class="n">Union</span><span class="l">Scale wages, every set</span></div>
+        <div><span class="n">All&#8209;ages</span><span class="l">Free &amp; low-cost</span></div>
+        <div><span class="n">Local 76-493</span><span class="l">Backed by the union</span></div>
+      </div>
+    </div>
+  </section>
 
-  <section class="band band--night">
+  <section class="band">
     <div class="wrap">
       <p class="eyebrow reveal">What we bring to the block</p>
       <h2 class="h-section reveal">Everything a neighborhood needs to make a night happen.</h2>
@@ -576,14 +647,7 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     </div>
   </section>
 
-  <div class="stats" aria-label="At a glance">
-    <div class="stat reveal" style="--d:0s"><div class="n">Scale</div><div class="l">Union wages, every set</div></div>
-    <div class="stat reveal" style="--d:.06s"><div class="n">All-ages</div><div class="l">Accessible by design</div></div>
-    <div class="stat reveal" style="--d:.12s"><div class="n">501(c)(3)</div><div class="l">Tax-deductible giving</div></div>
-    <div class="stat reveal" style="--d:.18s"><div class="n">2025</div><div class="l">Rooted in Seattle</div></div>
-  </div>
-
-  <section class="band" id="involved">
+  <section class="band band--night" id="involved">
     <div class="wrap">
       <p class="eyebrow reveal">Three ways in</p>
       <h2 class="h-section reveal">Pick the door that fits you.</h2>
@@ -780,11 +844,20 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
           <div class="give__row reveal" style="--d:.14s"><span class="k">Where it goes</span><h3>Sustain community</h3><p>Your support helps make great live music a regular occurrence, turning everyday spaces into vibrant hubs of connection.</p></div>
         </div>
         <div class="give__cta reveal" style="--d:.1s">
-          <div class="amt">$25</div>
-          <h3>puts a musician on the block</h3>
-          <p>Give once or monthly. Every amount goes straight to the work.</p>
-          <div class="give__chips"><span>$25</span><span>$50</span><span>$100</span><span>Custom</span></div>
-          <a class="btn btn--solid" style="width:100%;justify-content:center" href="https://givebutter.com/sustainable-music-northwest" target="_blank" rel="noopener">Donate now</a>
+          <div class="give__freq" id="giveFreq">
+            <button class="on" data-freq="once">One-time</button>
+            <button data-freq="monthly">Monthly</button>
+          </div>
+          <div class="amt">$<span id="giveAmt">50</span><span class="amt__per" id="givePer"></span></div>
+          <h3 id="giveImpact">puts a musician on the block</h3>
+          <p>Every dollar goes straight to the work.</p>
+          <div class="give__chips" id="giveChips">
+            <button data-amt="25">$25</button>
+            <button class="on" data-amt="50">$50<span class="pop">Most popular</span></button>
+            <button data-amt="100">$100</button>
+            <button data-amt="250">$250</button>
+          </div>
+          <a class="btn btn--solid" id="giveBtn" style="width:100%;justify-content:center" href="https://givebutter.com/sustainable-music-northwest?amount=50" target="_blank" rel="noopener">Donate $50</a>
           <div class="give__note">Sustainable Music Northwest is a<br>registered 501(c)(3) nonprofit.<br>Your donation is tax-deductible.</div>
         </div>
       </div>
@@ -901,6 +974,22 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   var evList=document.getElementById('evList');
   evList.innerHTML=EVENTS.map(evCardHTML).join('');
   document.getElementById('evCount').textContent=EVENTS.length+' upcoming';
+
+  /* ---------- next-up urgency module ---------- */
+  (function(){
+    var now=new Date();
+    var up=EVENTS.filter(function(ev){return pd(ev.s)>=now;}).sort(function(a,b){return pd(a.s)-pd(b.s);});
+    if(!up.length)return;
+    var ev=up[0],d=pd(ev.s);
+    var FULL=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    var days=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/86400000);
+    var when=days<=0?'Today':days===1?'Tomorrow':(days<7?('This '+FULL[d.getDay()]):('In '+days+' days'));
+    document.getElementById('nextupWhen').textContent=when;
+    document.getElementById('nextupTitle').textContent=ev.t;
+    document.getElementById('nextupMeta').textContent=MON[d.getMonth()]+' '+d.getDate()+' · '+fmtTime(d)+' · '+ev.v;
+    document.getElementById('nextupBtn').href=ev.url;
+    document.getElementById('nextup').hidden=false;
+  })();
 
   /* ---------- events: list/calendar toggle ---------- */
   var segList=document.getElementById('segList'),segCal=document.getElementById('segCal');
@@ -1020,6 +1109,35 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     f.addEventListener('submit',function(ev){ev.preventDefault();if(!f.checkValidity()){f.reportValidity();return;}
       m.classList.add('show');f.querySelector('button[type=submit]').textContent='Received';setTimeout(function(){f.reset();},400);});}
   wire('rosterForm','rosterMsg');wire('listForm','listMsg');
+
+  /* ---------- donate: selectable tier + frequency ---------- */
+  (function(){
+    var st={amt:50,freq:'once'};
+    var amtEl=document.getElementById('giveAmt'),perEl=document.getElementById('givePer'),
+        impEl=document.getElementById('giveImpact'),btn=document.getElementById('giveBtn');
+    if(!amtEl)return;
+    function impact(a){return a>=250?'sponsors a whole neighborhood night':a>=100?'funds a full set, start to finish':a>=50?'puts a musician on the block':'helps pay a musician fairly';}
+    function render(){
+      amtEl.textContent=st.amt;
+      perEl.textContent=st.freq==='monthly'?'/mo':'';
+      impEl.textContent=impact(st.amt);
+      btn.textContent='Donate $'+st.amt+(st.freq==='monthly'?'/mo':'');
+      btn.href='https://givebutter.com/sustainable-music-northwest?amount='+st.amt+(st.freq==='monthly'?'&frequency=monthly':'');
+    }
+    document.getElementById('giveChips').addEventListener('click',function(e){
+      var b=e.target.closest('button');if(!b)return;
+      st.amt=+b.dataset.amt;
+      this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});
+      render();
+    });
+    document.getElementById('giveFreq').addEventListener('click',function(e){
+      var b=e.target.closest('button');if(!b)return;
+      st.freq=b.dataset.freq;
+      this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});
+      render();
+    });
+    render();
+  })();
 })();
 </script>
 
