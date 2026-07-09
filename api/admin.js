@@ -3,7 +3,7 @@
 
 const URL_ = process.env.KV_REST_API_URL;
 const TOKEN = process.env.KV_REST_API_TOKEN;
-const ADMIN = process.env.ADMIN_KEY || '';
+const ADMIN = (process.env.ADMIN_KEY || '').trim();
 
 async function kv(cmd) {
   const r = await fetch(URL_, {
@@ -21,7 +21,7 @@ function parse(o) {
 }
 
 module.exports = async function handler(req, res) {
-  const key = (req.headers['x-admin-key'] || (req.query && req.query.key) || '').toString();
+  const key = (req.headers['x-admin-key'] || (req.query && req.query.key) || '').toString().trim();
   if (!ADMIN || key !== ADMIN) { res.status(401).json({ error: 'unauthorized' }); return; }
   if (!URL_ || !TOKEN) { res.status(500).json({ error: 'store not configured' }); return; }
 
