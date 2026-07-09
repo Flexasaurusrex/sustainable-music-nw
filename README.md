@@ -18,7 +18,21 @@ Light/dark theme toggle in the nav. Hash-based routing (`#approach`, `#events`, 
 
 Static site. `vercel --prod` deploys as-is. Pushing to `main` auto-deploys via the connected Vercel project.
 
-## TODO
+## Live event sync
 
-- **Forms**: the roster + mailing-list forms currently run a client-side success demo. Point them at a Formspree endpoint (see the comment in the `<script>`) to collect real submissions.
-- **Events**: the `EVENTS` array in the script was scraped from the live Squarespace calendar. Update it as events roll over, or wire it to pull from `sustainablemusicnw.org/events?format=json` to stay current automatically.
+`api/events.js` is a Vercel serverless function that pulls upcoming events from
+the Squarespace feed and returns them in the page's shape. The page fetches
+`/api/events` on load and falls back to its baked-in list if the call fails.
+Events stay current automatically, no manual edits.
+
+## Forms
+
+The roster + mailing-list forms are wired to Web3Forms. Set `FORM_KEY` in the
+`<script>` (a free key from web3forms.com, tied to the SMNW inbox) and
+submissions get emailed there. While `FORM_KEY` is empty they show a success
+state without sending, so nothing breaks.
+
+## Gallery
+
+`/#gallery` renders a masonry of event photos with a keyboard-navigable
+lightbox. Photos are embedded; the `GALLERY` array in the script controls them.
