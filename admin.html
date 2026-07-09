@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>SMNW · Submissions</title>
+<style>
+  :root{--bg:#0b131e;--panel:#101c29;--line:rgba(232,193,90,.16);--brass:#e8c15a;--text:#e7e0cf;--mute:#93a0ad}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+  a{color:var(--brass)}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 22px 80px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+  .brand{font-weight:700;font-size:1.15rem;letter-spacing:-.01em}
+  .brand small{display:block;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);font-weight:500;margin-top:3px}
+  .btn{font:inherit;font-size:.82rem;font-weight:600;border:1px solid var(--brass);background:transparent;color:var(--brass);padding:9px 15px;border-radius:4px;cursor:pointer;transition:background .15s}
+  .btn:hover{background:rgba(232,193,90,.12)}
+  .btn--solid{background:var(--brass);color:#0a0a0b;border-color:var(--brass)}
+  .btn--ghost{border-color:var(--line);color:var(--mute)}
+  .btn--ghost:hover{color:var(--text)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  /* login */
+  #login{max-width:360px;margin:14vh auto 0;text-align:center}
+  #login h1{font-size:1.3rem;margin:0 0 6px}
+  #login p{color:var(--mute);font-size:.9rem;margin:0 0 22px}
+  #login input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--text);font:inherit;margin-bottom:12px}
+  #login input:focus{outline:none;border-color:var(--brass)}
+  #loginErr{color:#e8896a;font-size:.82rem;min-height:1.2em;margin-top:10px}
+  /* sections */
+  .tabs{display:flex;gap:8px;margin-bottom:18px}
+  .tab{font-size:.8rem;font-weight:600;padding:9px 16px;border:1px solid var(--line);border-radius:4px;background:transparent;color:var(--mute);cursor:pointer}
+  .tab.on{background:var(--brass);color:#0a0a0b;border-color:var(--brass)}
+  .tab .n{opacity:.7;margin-left:6px;font-weight:500}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .card__head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .card__head h2{font-size:1rem;margin:0}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.86rem}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid rgba(232,193,90,.08);vertical-align:top}
+  th{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brass);white-space:nowrap}
+  td.when{color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums}
+  td .notes{color:var(--mute);max-width:340px}
+  tr:last-child td{border-bottom:0}
+  .empty{padding:40px 18px;text-align:center;color:var(--mute)}
+  .muted{color:var(--mute);font-size:.82rem}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h1>Sustainable Music NW</h1>
+  <p>Submissions dashboard</p>
+  <input id="pw" type="password" placeholder="Admin password" autocomplete="current-password">
+  <button class="btn btn--solid" id="loginBtn" style="width:100%">Enter</button>
+  <div id="loginErr"></div>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <header>
+    <div class="brand">Submissions<small>Sustainable Music NW</small></div>
+    <div class="row">
+      <span class="muted" id="updated"></span>
+      <button class="btn btn--ghost" id="refresh">Refresh</button>
+      <button class="btn btn--ghost" id="logout">Log out</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="roster">Artist roster <span class="n" id="cRoster">0</span></button>
+    <button class="tab" data-tab="mailing">Mailing list <span class="n" id="cMailing">0</span></button>
+  </div>
+
+  <div class="card" id="panel-roster">
+    <div class="card__head"><h2>Artist roster</h2><button class="btn" data-csv="roster">Export CSV</button></div>
+    <div class="tablewrap" id="tbl-roster"></div>
+  </div>
+
+  <div class="card" id="panel-mailing" hidden>
+    <div class="card__head"><h2>Mailing list</h2><button class="btn" data-csv="mailing">Export CSV</button></div>
+    <div class="tablewrap" id="tbl-mailing"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY_STORE='smnw-admin';
+  var login=document.getElementById('login'),app=document.getElementById('app');
+  var pw=document.getElementById('pw'),loginErr=document.getElementById('loginErr');
+  var data={roster:[],mailing:[]};
+
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function fmt(ts){if(!ts)return '';var d=new Date(ts);return d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+' '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});}
+  function linkify(s){if(!s)return '';var u=esc(s);var href=/^https?:\/\//.test(s)?s:(/\w+\.\w/.test(s)?'https://'+s:null);return href?'<a href="'+esc(href)+'" target="_blank" rel="noopener">'+u+'</a>':u;}
+
+  function renderRoster(){
+    var rows=data.roster;
+    document.getElementById('cRoster').textContent=rows.length;
+    var el=document.getElementById('tbl-roster');
+    if(!rows.length){el.innerHTML='<div class="empty">No roster submissions yet.</div>';return;}
+    el.innerHTML='<table><thead><tr><th>When</th><th>Name</th><th>Email</th><th>Act</th><th>Discipline</th><th>Links</th><th>Notes</th></tr></thead><tbody>'
+      +rows.map(function(r){return '<tr><td class="when">'+fmt(r.ts)+'</td><td>'+esc(r.name)+'</td><td><a href="mailto:'+esc(r.email)+'">'+esc(r.email)+'</a></td><td>'+esc(r.act)+'</td><td>'+esc(r.discipline)+'</td><td>'+linkify(r.links)+'</td><td class="notes">'+esc(r.notes)+'</td></tr>';}).join('')
+      +'</tbody></table>';
+  }
+  function renderMailing(){
+    var rows=data.mailing;
+    document.getElementById('cMailing').textContent=rows.length;
+    var el=document.getElementById('tbl-mailing');
+    if(!rows.length){el.innerHTML='<div class="empty">No mailing-list signups yet.</div>';return;}
+    el.innerHTML='<table><thead><tr><th>When</th><th>Email</th></tr></thead><tbody>'
+      +rows.map(function(r){return '<tr><td class="when">'+fmt(r.ts)+'</td><td><a href="mailto:'+esc(r.email)+'">'+esc(r.email)+'</a></td></tr>';}).join('')
+      +'</tbody></table>';
+  }
+
+  function csv(kind){
+    var rows=data[kind]; if(!rows.length)return;
+    var cols=kind==='roster'?['ts','name','email','act','discipline','links','notes']:['ts','email'];
+    var head=cols.map(function(c){return c==='ts'?'date':c;});
+    var lines=[head.join(',')].concat(rows.map(function(r){
+      return cols.map(function(c){var v=c==='ts'?new Date(r.ts).toISOString():(r[c]||'');return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');
+    }));
+    var blob=new Blob([lines.join('\n')],{type:'text/csv'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='smnw-'+kind+'.csv';a.click();
+  }
+
+  function load(){
+    var key=localStorage.getItem(KEY_STORE); if(!key){showLogin();return;}
+    document.getElementById('updated').textContent='Loading…';
+    fetch('/api/admin',{headers:{'x-admin-key':key}}).then(function(r){
+      if(r.status===401){localStorage.removeItem(KEY_STORE);showLogin('Wrong password.');throw 0;}
+      return r.json();
+    }).then(function(d){
+      data.roster=d.roster||[];data.mailing=d.mailing||[];
+      renderRoster();renderMailing();
+      document.getElementById('updated').textContent='Updated '+new Date().toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+      login.hidden=true;app.hidden=false;
+    }).catch(function(e){if(e!==0){document.getElementById('updated').textContent='Error loading.';}});
+  }
+  function showLogin(msg){app.hidden=true;login.hidden=false;loginErr.textContent=msg||'';pw.value='';pw.focus();}
+
+  document.getElementById('loginBtn').addEventListener('click',function(){
+    if(!pw.value)return;localStorage.setItem(KEY_STORE,pw.value.trim());load();
+  });
+  pw.addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click();});
+  document.getElementById('refresh').addEventListener('click',load);
+  document.getElementById('logout').addEventListener('click',function(){localStorage.removeItem(KEY_STORE);showLogin();});
+  document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===t);});
+    var k=t.dataset.tab;
+    document.getElementById('panel-roster').hidden=k!=='roster';
+    document.getElementById('panel-mailing').hidden=k!=='mailing';
+  });});
+  document.querySelectorAll('[data-csv]').forEach(function(b){b.addEventListener('click',function(){csv(b.dataset.csv);});});
+
+  if(localStorage.getItem(KEY_STORE))load(); else showLogin();
+})();
+</script>
+</body>
+</html>

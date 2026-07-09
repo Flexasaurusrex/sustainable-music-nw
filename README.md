@@ -25,12 +25,16 @@ the Squarespace feed and returns them in the page's shape. The page fetches
 `/api/events` on load and falls back to its baked-in list if the call fails.
 Events stay current automatically, no manual edits.
 
-## Forms
+## Forms + admin panel
 
-The roster + mailing-list forms are wired to Web3Forms. Set `FORM_KEY` in the
-`<script>` (a free key from web3forms.com, tied to the SMNW inbox) and
-submissions get emailed there. While `FORM_KEY` is empty they show a success
-state without sending, so nothing breaks.
+The roster + mailing-list forms POST to `api/submit.js`, which stores entries in
+Vercel KV (Upstash Redis) under `smnw:roster` and `smnw:mailing`.
+
+`/admin.html` is a password-gated dashboard that reads them via `api/admin.js`
+(tables, mailto links, CSV export). Two env vars drive it:
+
+- `KV_REST_API_URL` / `KV_REST_API_TOKEN` — injected by the connected KV store
+- `ADMIN_KEY` — the dashboard password (`vercel env add ADMIN_KEY`)
 
 ## Gallery
 
