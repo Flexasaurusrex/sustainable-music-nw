@@ -567,6 +567,37 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
 .foot__bottom{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;color:var(--slate-dim);text-transform:uppercase;align-items:center}
 
 /* ============================================================
+   INLINE EDITOR
+   ============================================================ */
+.keyhole{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:default;opacity:.85}
+.keyhole:hover{color:var(--brass-text)}
+body.editing [data-edit]{outline:1px dashed rgba(232,193,90,.45);outline-offset:4px;border-radius:2px;cursor:text;transition:outline-color .2s,background .2s}
+body.editing [data-edit]:hover{outline-color:var(--brass);background:rgba(232,193,90,.05)}
+body.editing [data-edit]:focus{outline:2px solid var(--brass);background:rgba(232,193,90,.06)}
+body.editing [data-edit-img]{outline:2px dashed var(--brass);outline-offset:3px;cursor:pointer}
+body.editing [data-edit-img]:hover{outline-style:solid;filter:brightness(.82)}
+.edbar{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:1200;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(12,20,32,.97);border:1px solid var(--line);border-radius:12px;padding:10px 14px;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.edbar .lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);display:flex;align-items:center;gap:7px}
+.edbar .lbl::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brass);animation:pulse 2s ease-out infinite}
+.edbar button,.edbar a{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:9px 13px;border-radius:6px;border:1px solid var(--line);background:transparent;color:#e7e0cf;cursor:pointer;text-decoration:none;transition:background .2s}
+.edbar button:hover,.edbar a:hover{background:rgba(255,255,255,.06)}
+.edbar button.primary{background:var(--brass);color:#0a0a0b;border-color:var(--brass)}
+.edbar button.primary:disabled{opacity:.4;cursor:default}
+.edbar .edlink{color:var(--slate)}
+.edLaunch{position:fixed;right:18px;bottom:18px;z-index:1150;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:11px 16px;border-radius:8px;border:1px solid var(--brass);background:rgba(12,20,32,.9);color:var(--brass);cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.edLaunch:hover{background:var(--brass);color:#0a0a0b}
+.adlogin{position:fixed;inset:0;z-index:1300;background:rgba(6,8,11,.7);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.adlogin[hidden]{display:none}
+.adlogin__box{width:300px;max-width:100%;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.adlogin__t{font-family:var(--mono);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-text);margin-bottom:12px}
+.adlogin__box input{width:100%;padding:12px 13px;border:1px solid var(--harbor-line);border-radius:5px;background:rgba(8,9,11,.5);color:var(--cream);font:inherit;font-size:1rem}
+.adlogin__box input:focus{outline:none;border-color:var(--brass)}
+.adlogin__row{display:flex;gap:8px;margin-top:12px}
+.adlogin__row button{flex:1;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:11px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--cream);cursor:pointer}
+.adlogin__row button.primary{background:var(--brass);color:#0a0a0b;border-color:var(--brass)}
+.adlogin__err{font-family:var(--mono);font-size:.64rem;color:#e8896a;margin-top:10px;min-height:1em;letter-spacing:.04em}
+
+/* ============================================================
    REVEAL
    ============================================================ */
 .reveal{transition:opacity .75s ease,transform .9s cubic-bezier(.16,.84,.3,1.06),filter .7s ease;transition-delay:var(--d,0s)}
@@ -607,13 +638,13 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <header class="hero" data-anchor>
     <div class="hero__bloom" id="bloom"></div>
     <div class="hero__seal" id="seal" role="img" aria-label="Sustainable Music NW"></div>
-    <h1 class="hero__title">Live music, back on <em>your block.</em></h1>
-    <p class="hero__sub">We put professional musicians, paid a fair union-scale wage, into the places Seattle already gathers. The result is a stronger, more connected neighborhood.</p>
+    <h1 class="hero__title" data-edit="c1">Live music, back on <em>your block.</em></h1>
+    <p class="hero__sub" data-edit="c2">We put professional musicians, paid a fair union-scale wage, into the places Seattle already gathers. The result is a stronger, more connected neighborhood.</p>
     <div class="hero__cta">
       <a class="btn btn--solid" data-go="events">See upcoming events</a>
     </div>
     <a class="hero__alt" href="#roster" data-scroll="roster">Seattle musician? Join the roster →</a>
-    <p class="hero__trust">Backed by the Musicians' Association of Seattle, Local 76-493</p>
+    <p class="hero__trust" data-edit="c3">Backed by the Musicians' Association of Seattle, Local 76-493</p>
     <div class="hero__cue"></div>
   </header>
 
@@ -627,7 +658,7 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="nextup" id="nextup" hidden>
     <div class="wrap nextup__in">
       <div class="nextup__l"><span class="nextup__lab"><i class="pulse"></i>Next up</span><span class="nextup__cd" id="nextupWhen"></span></div>
-      <div class="nextup__m"><h3 id="nextupTitle"></h3><span id="nextupMeta"></span></div>
+      <div class="nextup__m"><h3 id="nextupTitle" data-edit="c4"></h3><span id="nextupMeta"></span></div>
       <div class="nextup__r"><a class="btn btn--solid btn--sm" id="nextupBtn" target="_blank" rel="noopener">Details</a><a class="btn btn--ghost btn--sm" data-go="events">All events</a></div>
     </div>
   </section>
@@ -635,10 +666,10 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="band" id="mission">
     <div class="wrap">
       <p class="eyebrow reveal">The mission</p>
-      <h2 class="mission__quote reveal">Live music should be a <b>regular occurrence</b> in every neighborhood, and a driving force for keeping neighbors connected.</h2>
+      <h2 class="mission__quote reveal" data-edit="c5">Live music should be a <b>regular occurrence</b> in every neighborhood, and a driving force for keeping neighbors connected.</h2>
       <div class="mission__grid">
-        <div class="reveal" style="--d:0s"><p>We are not here to put on a show and leave. We are here to help you build a stronger, more connected neighborhood through the power of live music.</p><p>Rather than run a fixed concert hall, we bring performances to where the community already gathers, and partner directly with residents and local groups.</p></div>
-        <div class="reveal" style="--d:.12s"><p>Our musicians are professional and adaptable, able to set a calm ambiance or fill a block party with energy. And they are paid what the craft is worth.</p><p>Sustainable Music Northwest is a registered 501(c)(3) nonprofit. Every event is all-ages and built to be accessible to the whole neighborhood.</p></div>
+        <div class="reveal" style="--d:0s"><p data-edit="c6">We are not here to put on a show and leave. We are here to help you build a stronger, more connected neighborhood through the power of live music.</p><p data-edit="c7">Rather than run a fixed concert hall, we bring performances to where the community already gathers, and partner directly with residents and local groups.</p></div>
+        <div class="reveal" style="--d:.12s"><p data-edit="c8">Our musicians are professional and adaptable, able to set a calm ambiance or fill a block party with energy. And they are paid what the craft is worth.</p><p data-edit="c9">Sustainable Music Northwest is a registered 501(c)(3) nonprofit. Every event is all-ages and built to be accessible to the whole neighborhood.</p></div>
       </div>
     </div>
   </section>
@@ -647,8 +678,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     <div class="wrap">
       <p class="eyebrow center reveal">From the neighborhood</p>
       <blockquote class="quote reveal" style="--d:.05s">
-        <p>“One of the things that really stood out to me was the <b>strong sense of community and connection</b> it created. People were genuinely just happy to be there, and the music elevated the experience, as well as being professionally handled in all regards.”</p>
-        <cite>Louis Messmer, <b>attended a co-hosted event</b></cite>
+        <p data-edit="c10">“One of the things that really stood out to me was the <b>strong sense of community and connection</b> it created. People were genuinely just happy to be there, and the music elevated the experience, as well as being professionally handled in all regards.”</p>
+        <cite data-edit="c11">Louis Messmer, <b>attended a co-hosted event</b></cite>
       </blockquote>
       <div class="proof__stats reveal" style="--d:.1s">
         <div><span class="n">30+</span><span class="l">Neighborhood shows</span></div>
@@ -662,12 +693,12 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="band">
     <div class="wrap">
       <p class="eyebrow reveal">What we bring to the block</p>
-      <h2 class="h-section reveal">Everything a neighborhood needs to make a night happen.</h2>
+      <h2 class="h-section reveal" data-edit="c12">Everything a neighborhood needs to make a night happen.</h2>
       <div class="spec">
-        <div class="spec__cell reveal" style="--d:0s"><span class="k">Talent</span><h3>Professional musicians</h3><p>Vetted, adaptable performers matched to your space and the mood you want, from a quiet garden set to a full block party.</p></div>
-        <div class="spec__cell reveal" style="--d:.07s"><span class="k">Fair pay</span><h3>Union-scale wages</h3><p>We pay every artist a fair, union-scale wage. A viable music profession is the whole point, not an afterthought.</p></div>
-        <div class="spec__cell reveal" style="--d:.14s"><span class="k">Logistics</span><h3>On-the-ground support</h3><p>Setup help and event coordination so hosts can focus on their neighbors instead of the load-in.</p></div>
-        <div class="spec__cell reveal" style="--d:.21s"><span class="k">Reach</span><h3>Marketing &amp; promotion</h3><p>Branded materials and promotion across our channels so the right people know your event is happening.</p></div>
+        <div class="spec__cell reveal" style="--d:0s"><span class="k">Talent</span><h3 data-edit="c13">Professional musicians</h3><p data-edit="c14">Vetted, adaptable performers matched to your space and the mood you want, from a quiet garden set to a full block party.</p></div>
+        <div class="spec__cell reveal" style="--d:.07s"><span class="k">Fair pay</span><h3 data-edit="c15">Union-scale wages</h3><p data-edit="c16">We pay every artist a fair, union-scale wage. A viable music profession is the whole point, not an afterthought.</p></div>
+        <div class="spec__cell reveal" style="--d:.14s"><span class="k">Logistics</span><h3 data-edit="c17">On-the-ground support</h3><p data-edit="c18">Setup help and event coordination so hosts can focus on their neighbors instead of the load-in.</p></div>
+        <div class="spec__cell reveal" style="--d:.21s"><span class="k">Reach</span><h3 data-edit="c19">Marketing &amp; promotion</h3><p data-edit="c20">Branded materials and promotion across our channels so the right people know your event is happening.</p></div>
       </div>
     </div>
   </section>
@@ -675,11 +706,11 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="band band--night" id="involved">
     <div class="wrap">
       <p class="eyebrow reveal">Three ways in</p>
-      <h2 class="h-section reveal">Pick the door that fits you.</h2>
+      <h2 class="h-section reveal" data-edit="c21">Pick the door that fits you.</h2>
       <div class="doors">
-        <div class="door reveal" style="--d:0s"><span class="door__no">Door 01</span><h3>Host an event</h3><p>Ready to bring music to life in your neighborhood? We supply the right performers and the on-the-ground support. You bring the block.</p><a class="btn btn--ghost" data-go="approach">How it works</a></div>
-        <div class="door reveal" style="--d:.1s"><span class="door__no">Door 02</span><h3>Suggest a space</h3><p>Know a spot that would be perfect for a community set, a brewpub, a garden, a courtyard? Point us to it.</p><a class="btn btn--ghost" href="#roster" data-scroll="roster">Get in touch</a></div>
-        <div class="door reveal" style="--d:.2s"><span class="door__no">Door 03</span><h3>Donate</h3><p>Your gift pays musicians fairly and puts live music on more blocks. Tax-deductible to the full extent of the law.</p><a class="btn btn--solid" data-go="donate">Give now</a></div>
+        <div class="door reveal" style="--d:0s"><span class="door__no">Door 01</span><h3 data-edit="c22">Host an event</h3><p data-edit="c23">Ready to bring music to life in your neighborhood? We supply the right performers and the on-the-ground support. You bring the block.</p><a class="btn btn--ghost" data-go="approach">How it works</a></div>
+        <div class="door reveal" style="--d:.1s"><span class="door__no">Door 02</span><h3 data-edit="c24">Suggest a space</h3><p data-edit="c25">Know a spot that would be perfect for a community set, a brewpub, a garden, a courtyard? Point us to it.</p><a class="btn btn--ghost" href="#roster" data-scroll="roster">Get in touch</a></div>
+        <div class="door reveal" style="--d:.2s"><span class="door__no">Door 03</span><h3 data-edit="c26">Donate</h3><p data-edit="c27">Your gift pays musicians fairly and puts live music on more blocks. Tax-deductible to the full extent of the law.</p><a class="btn btn--solid" data-go="donate">Give now</a></div>
       </div>
     </div>
   </section>
@@ -689,8 +720,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
       <div class="roster__grid">
         <div class="roster__intro reveal">
           <p class="eyebrow">Seattle artists</p>
-          <h2>Get on the roster.</h2>
-          <p>We are always expanding our network of professional musicians and bands. Add your name and you could be booked for a future neighborhood event, at a fair, union-scale wage.</p>
+          <h2 data-edit="c28">Get on the roster.</h2>
+          <p data-edit="c29">We are always expanding our network of professional musicians and bands. Add your name and you could be booked for a future neighborhood event, at a fair, union-scale wage.</p>
           <p class="roster__note">Solo · Duo · Full band<br>Every genre · All neighborhoods<br>Paid work, not exposure</p>
         </div>
         <form class="form reveal" id="rosterForm" novalidate>
@@ -714,9 +745,9 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="phead band--night">
     <div class="wrap">
       <p class="phead__ey reveal">Our approach</p>
-      <h1 class="reveal" style="--d:.05s">Music, brought to <em>where the community already is.</em></h1>
-      <p class="reveal" style="--d:.1s">We don't just put on concerts. We empower neighborhoods to create their own vibrant gatherings, and we make the music profession viable while we do it.</p>
-      <figure class="figure appr-hero reveal" style="--d:.15s"><img id="apprHero" alt="A Sustainable Music NW community concert"><figcaption>Community concert · Fremont Brewing · photo Giao Nguyen</figcaption></figure>
+      <h1 class="reveal" style="--d:.05s" data-edit="c30">Music, brought to <em>where the community already is.</em></h1>
+      <p class="reveal" style="--d:.1s" data-edit="c31">We don't just put on concerts. We empower neighborhoods to create their own vibrant gatherings, and we make the music profession viable while we do it.</p>
+      <figure class="figure appr-hero reveal" style="--d:.15s"><img id="apprHero" data-edit-img="img.approach.hero" alt="A Sustainable Music NW community concert"><figcaption>Community concert · Fremont Brewing · photo Giao Nguyen</figcaption></figure>
     </div>
   </section>
 
@@ -724,19 +755,19 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     <div class="wrap">
       <div class="appr-grid">
         <div class="appr-copy reveal">
-          <h2>We meet people where they gather.</h2>
-          <p>Rather than operate a fixed venue, we bring performances to the places a neighborhood already lives: brewpubs, block parties, apartment courtyards, and community gardens.</p>
-          <p>We partner directly with residents and local groups, then supply the right musicians for the room, professional and adaptable enough to set a calm ambiance or turn a corner park into a party.</p>
+          <h2 data-edit="c32">We meet people where they gather.</h2>
+          <p data-edit="c33">Rather than operate a fixed venue, we bring performances to the places a neighborhood already lives: brewpubs, block parties, apartment courtyards, and community gardens.</p>
+          <p data-edit="c34">We partner directly with residents and local groups, then supply the right musicians for the room, professional and adaptable enough to set a calm ambiance or turn a corner park into a party.</p>
         </div>
-        <figure class="figure fig reveal" style="--d:.1s"><img id="apprA" alt="Live music in a Seattle neighborhood space"></figure>
+        <figure class="figure fig reveal" style="--d:.1s"><img id="apprA" data-edit-img="img.approach.a" alt="Live music in a Seattle neighborhood space"></figure>
       </div>
 
       <div class="appr-grid flip">
-        <figure class="figure fig reveal"><img id="apprB" alt="Neighbors gathered around a performance"></figure>
+        <figure class="figure fig reveal"><img id="apprB" data-edit-img="img.approach.b" alt="Neighbors gathered around a performance"></figure>
         <div class="appr-copy reveal" style="--d:.1s">
-          <h2>We pay musicians what the craft is worth.</h2>
-          <p>Every performer is compensated at a fair, union-scale wage. A sustainable music scene starts with treating the profession as a profession.</p>
-          <p>For hosts, we handle the parts that make events hard: setup and coordination, branded marketing materials, and promotion across our channels, so the night runs itself.</p>
+          <h2 data-edit="c35">We pay musicians what the craft is worth.</h2>
+          <p data-edit="c36">Every performer is compensated at a fair, union-scale wage. A sustainable music scene starts with treating the profession as a profession.</p>
+          <p data-edit="c37">For hosts, we handle the parts that make events hard: setup and coordination, branded marketing materials, and promotion across our channels, so the night runs itself.</p>
         </div>
       </div>
     </div>
@@ -751,8 +782,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
 
   <section class="band band--night" style="text-align:center">
     <div class="wrap">
-      <h2 class="reveal" style="font-size:clamp(1.8rem,4vw,2.8rem);max-width:20ch;margin:0 auto 1.4rem">Have a space, or a block, that deserves live music?</h2>
-      <p class="lead reveal" style="--d:.06s;max-width:44ch;margin:0 auto 2rem">Tell us where your neighborhood gathers. We'll bring the music and the support to make it happen.</p>
+      <h2 class="reveal" style="font-size:clamp(1.8rem,4vw,2.8rem);max-width:20ch;margin:0 auto 1.4rem" data-edit="c38">Have a space, or a block, that deserves live music?</h2>
+      <p class="lead reveal" style="--d:.06s;max-width:44ch;margin:0 auto 2rem" data-edit="c39">Tell us where your neighborhood gathers. We'll bring the music and the support to make it happen.</p>
       <div class="reveal" style="--d:.12s;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
         <a class="btn btn--solid" data-go="home" data-scroll="roster">Host an event</a>
         <a class="btn btn--ghost" data-go="events">See what's coming up</a>
@@ -768,8 +799,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="phead">
     <div class="wrap">
       <p class="phead__ey reveal">Calendar</p>
-      <h1 class="reveal" style="--d:.05s">Upcoming <em>events.</em></h1>
-      <p class="reveal" style="--d:.1s">Free and low-cost live music across Seattle neighborhoods. All-ages, all welcome. Browse the list or jump to the calendar.</p>
+      <h1 class="reveal" style="--d:.05s" data-edit="c40">Upcoming <em>events.</em></h1>
+      <p class="reveal" style="--d:.1s" data-edit="c41">Free and low-cost live music across Seattle neighborhoods. All-ages, all welcome. Browse the list or jump to the calendar.</p>
       <div class="evbar reveal" style="--d:.15s">
         <div class="seg" role="tablist">
           <button class="on" id="segList" data-ev="list" role="tab">
@@ -808,8 +839,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="band band--night" style="text-align:center">
     <div class="wrap">
       <p class="eyebrow center reveal">Seattle artists</p>
-      <h2 class="reveal" style="--d:.05s;font-size:clamp(1.8rem,4vw,2.8rem);max-width:18ch;margin:0 auto 1.4rem">Want to play a future event?</h2>
-      <p class="lead reveal" style="--d:.1s;max-width:40ch;margin:0 auto 2rem">Get on the roster and we'll reach out when a set fits your sound.</p>
+      <h2 class="reveal" style="--d:.05s;font-size:clamp(1.8rem,4vw,2.8rem);max-width:18ch;margin:0 auto 1.4rem" data-edit="c42">Want to play a future event?</h2>
+      <p class="lead reveal" style="--d:.1s;max-width:40ch;margin:0 auto 2rem" data-edit="c43">Get on the roster and we'll reach out when a set fits your sound.</p>
       <a class="btn btn--solid reveal" style="--d:.15s" data-go="home" data-scroll="roster">Join the artist roster</a>
     </div>
   </section>
@@ -822,8 +853,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="phead band--night">
     <div class="wrap">
       <p class="phead__ey reveal">Gallery</p>
-      <h1 class="reveal" style="--d:.05s">Nights on <em>the block.</em></h1>
-      <p class="reveal" style="--d:.1s">Scenes from Sustainable Music NW events across Seattle. Tap any photo to view it full size.</p>
+      <h1 class="reveal" style="--d:.05s" data-edit="c44">Nights on <em>the block.</em></h1>
+      <p class="reveal" style="--d:.1s" data-edit="c45">Scenes from Sustainable Music NW events across Seattle. Tap any photo to view it full size.</p>
     </div>
   </section>
   <section class="band band--tight" style="padding-top:clamp(30px,5vw,52px)">
@@ -838,8 +869,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="phead band--night">
     <div class="wrap">
       <p class="phead__ey reveal">About us</p>
-      <h1 class="reveal" style="--d:.05s">A board of <em>working musicians.</em></h1>
-      <p class="reveal" style="--d:.1s">Sustainable Music Northwest is led by people rooted in Seattle's music scene, professional performers and educators who united around one idea: that live music can enrich a culture and strengthen a community.</p>
+      <h1 class="reveal" style="--d:.05s" data-edit="c46">A board of <em>working musicians.</em></h1>
+      <p class="reveal" style="--d:.1s" data-edit="c47">Sustainable Music Northwest is led by people rooted in Seattle's music scene, professional performers and educators who united around one idea: that live music can enrich a culture and strengthen a community.</p>
     </div>
   </section>
 
@@ -847,7 +878,7 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     <div class="wrap">
       <p class="eyebrow reveal">The board</p>
       <div class="team" id="teamGrid"></div>
-      <p class="boardnote reveal">Our board is composed of dedicated individuals, all deeply rooted in our local music scene as professional musicians and passionate educators. Each brings a wealth of experience and a profound love for music, working to ensure Sustainable Music continues to resonate throughout our region.</p>
+      <p class="boardnote reveal" data-edit="c48">Our board is composed of dedicated individuals, all deeply rooted in our local music scene as professional musicians and passionate educators. Each brings a wealth of experience and a profound love for music, working to ensure Sustainable Music continues to resonate throughout our region.</p>
     </div>
   </section>
 
@@ -869,8 +900,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
   <section class="phead">
     <div class="wrap">
       <p class="phead__ey reveal">Support the mission</p>
-      <h1 class="reveal" style="--d:.05s">Your support <em>matters.</em></h1>
-      <p class="reveal" style="--d:.1s">When you give to Sustainable Music Northwest, you invest in a movement that brings people together through live music, and pays the artists who make it possible.</p>
+      <h1 class="reveal" style="--d:.05s" data-edit="c49">Your support <em>matters.</em></h1>
+      <p class="reveal" style="--d:.1s" data-edit="c50">When you give to Sustainable Music Northwest, you invest in a movement that brings people together through live music, and pays the artists who make it possible.</p>
     </div>
   </section>
 
@@ -878,9 +909,9 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     <div class="wrap">
       <div class="give">
         <div class="give__ways">
-          <div class="give__row reveal" style="--d:0s"><span class="k">Where it goes</span><h3>Pay musicians a fair wage</h3><p>Your contribution ensures we can pay professional musicians a fair, union-scale wage, supporting the artists who make our mission possible.</p></div>
-          <div class="give__row reveal" style="--d:.07s"><span class="k">Where it goes</span><h3>Empower neighborhoods</h3><p>Your gift provides everything needed for a memorable community event, from professional musicians to marketing support, so residents can bring people together.</p></div>
-          <div class="give__row reveal" style="--d:.14s"><span class="k">Where it goes</span><h3>Sustain community</h3><p>Your support helps make great live music a regular occurrence, turning everyday spaces into vibrant hubs of connection.</p></div>
+          <div class="give__row reveal" style="--d:0s"><span class="k">Where it goes</span><h3 data-edit="c51">Pay musicians a fair wage</h3><p data-edit="c52">Your contribution ensures we can pay professional musicians a fair, union-scale wage, supporting the artists who make our mission possible.</p></div>
+          <div class="give__row reveal" style="--d:.07s"><span class="k">Where it goes</span><h3 data-edit="c53">Empower neighborhoods</h3><p data-edit="c54">Your gift provides everything needed for a memorable community event, from professional musicians to marketing support, so residents can bring people together.</p></div>
+          <div class="give__row reveal" style="--d:.14s"><span class="k">Where it goes</span><h3 data-edit="c55">Sustain community</h3><p data-edit="c56">Your support helps make great live music a regular occurrence, turning everyday spaces into vibrant hubs of connection.</p></div>
         </div>
         <div class="give__cta reveal" style="--d:.1s">
           <div class="give__freq" id="giveFreq">
@@ -888,8 +919,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
             <button data-freq="monthly">Monthly</button>
           </div>
           <div class="amt">$<span id="giveAmt">50</span><span class="amt__per" id="givePer"></span></div>
-          <h3 id="giveImpact">puts a musician on the block</h3>
-          <p>Every dollar goes straight to the work.</p>
+          <h3 id="giveImpact" data-edit="c57">puts a musician on the block</h3>
+          <p data-edit="c58">Every dollar goes straight to the work.</p>
           <div class="give__chips" id="giveChips">
             <button data-amt="25">$25</button>
             <button class="on" data-amt="50">$50<span class="pop">Most popular</span></button>
@@ -900,7 +931,7 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
           <div class="give__note">Sustainable Music Northwest is a<br>registered 501(c)(3) nonprofit.<br>Your donation is tax-deductible.</div>
         </div>
       </div>
-      <p class="lead reveal" style="max-width:60ch;margin:clamp(44px,6vw,72px) auto 0;text-align:center;font-family:var(--display);font-size:clamp(1.4rem,3vw,2rem);line-height:1.4;color:var(--cream)">Together, we can build a region where music is not just entertainment, but a driving force for positive social change.</p>
+      <p class="lead reveal" style="max-width:60ch;margin:clamp(44px,6vw,72px) auto 0;text-align:center;font-family:var(--display);font-size:clamp(1.4rem,3vw,2rem);line-height:1.4;color:var(--cream)" data-edit="c59">Together, we can build a region where music is not just entertainment, but a driving force for positive social change.</p>
     </div>
   </section>
 </main>
@@ -911,8 +942,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     <div class="list__inner">
       <div class="reveal">
         <p class="eyebrow">Stay close</p>
-        <h3>Get the next event before your feed does.</h3>
-        <p>Updates on new partnerships and upcoming neighborhood shows. No noise.</p>
+        <h3 data-edit="c60">Get the next event before your feed does.</h3>
+        <p data-edit="c61">Updates on new partnerships and upcoming neighborhood shows. No noise.</p>
       </div>
       <form class="list__form reveal" id="listForm" novalidate>
         <input type="email" name="email" placeholder="you@email.com" aria-label="Email address" required>
@@ -922,6 +953,16 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
     </div>
   </div>
 </section>
+
+<!-- ================= ADMIN LOGIN ================= -->
+<div class="adlogin" id="adlogin" hidden>
+  <div class="adlogin__box">
+    <div class="adlogin__t">Admin</div>
+    <input type="password" id="adpw" placeholder="Password" autocomplete="current-password">
+    <div class="adlogin__row"><button id="adcancel">Cancel</button><button id="adgo" class="primary">Enter</button></div>
+    <div class="adlogin__err" id="aderr"></div>
+  </div>
+</div>
 
 <!-- ================= LIGHTBOX ================= -->
 <div class="lightbox" id="lightbox" hidden>
@@ -949,8 +990,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
       </div>
     </div>
     <div class="foot__bottom">
-      <span>© 2026 Sustainable Music Northwest</span>
-      <span>Music, on your block.</span>
+      <span><button class="keyhole" id="adminKeyhole" aria-label="Admin" tabindex="-1">©</button> 2026 Sustainable Music Northwest</span>
+      <span data-edit="footer.tagline">Music, on your block.</span>
     </div>
   </div>
 </footer>
@@ -984,7 +1025,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   var tg=document.getElementById('teamGrid');
   TEAM.forEach(function(m,i){
     var d=document.createElement('div');d.className='member reveal';d.style.setProperty('--d',(i%3*0.07)+'s');
-    d.innerHTML='<img class="member__ph" src="'+(IMAGES[m[2]]||'')+'" alt="'+m[0]+'" loading="lazy"><div class="member__b"><h3>'+m[0]+'</h3><div class="member__role">'+m[1]+'</div><p>'+m[3]+'</p></div>';
+    d.innerHTML='<img class="member__ph" data-edit-img="team.'+i+'.photo" src="'+(IMAGES[m[2]]||'')+'" alt="'+m[0]+'" loading="lazy"><div class="member__b"><h3 data-edit="team.'+i+'.name">'+m[0]+'</h3><div class="member__role" data-edit="team.'+i+'.role">'+m[1]+'</div><p data-edit="team.'+i+'.bio">'+m[3]+'</p></div>';
     tg.appendChild(d);
   });
 
@@ -1147,12 +1188,12 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   var galleryGrid=document.getElementById('galleryGrid');
   if(galleryGrid){
     galleryGrid.innerHTML=GALLERY.map(function(g,i){
-      return '<figure data-i="'+i+'"><img src="'+IMAGES[g.k]+'" alt="'+g.c+'" loading="lazy"><figcaption>'+g.c+'</figcaption></figure>';
+      return '<figure data-i="'+i+'"><img data-edit-img="gal.'+i+'.img" src="'+IMAGES[g.k]+'" alt="'+g.c+'" loading="lazy"><figcaption data-edit="gal.'+i+'.cap">'+g.c+'</figcaption></figure>';
     }).join('');
     var lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg'),lbCap=document.getElementById('lbCap'),lbi=0;
     function openLb(i){lbi=(i+GALLERY.length)%GALLERY.length;lbImg.src=IMAGES[GALLERY[lbi].k];lbImg.alt=GALLERY[lbi].c;lbCap.textContent=GALLERY[lbi].c;lb.hidden=false;document.body.style.overflow='hidden';}
     function closeLb(){lb.hidden=true;document.body.style.overflow='';}
-    galleryGrid.addEventListener('click',function(e){var f=e.target.closest('figure');if(f)openLb(+f.dataset.i);});
+    galleryGrid.addEventListener('click',function(e){if(document.body.classList.contains('editing'))return;var f=e.target.closest('figure');if(f)openLb(+f.dataset.i);});
     document.getElementById('lbClose').addEventListener('click',closeLb);
     document.getElementById('lbPrev').addEventListener('click',function(){openLb(lbi-1);});
     document.getElementById('lbNext').addEventListener('click',function(){openLb(lbi+1);});
@@ -1265,6 +1306,105 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     });
     render();
   })();
+
+  /* ===== inline visual editor ===== */
+  var CONTENT={};
+  function applyContent(){
+    Object.keys(CONTENT).forEach(function(k){
+      var v=CONTENT[k];
+      var t=document.querySelector('[data-edit="'+k+'"]');
+      if(t){t.innerHTML=v;return;}
+      var im=document.querySelector('[data-edit-img="'+k+'"]');
+      if(im){ if(im.tagName==='IMG'){im.src=v;} else {im.style.backgroundImage='url("'+String(v).replace(/"/g,'&quot;')+'")';} }
+    });
+  }
+  fetch('/api/content').then(function(r){return r.json();}).then(function(d){CONTENT=d.content||{};applyContent();}).catch(function(){});
+
+  function adminKey(){try{return localStorage.getItem('smnw-admin');}catch(e){return null;}}
+  function setAdminKey(k){try{k?localStorage.setItem('smnw-admin',k):localStorage.removeItem('smnw-admin');}catch(e){}}
+  var dirty={};
+
+  var adlogin=document.getElementById('adlogin'),adpw=document.getElementById('adpw'),aderr=document.getElementById('aderr');
+  var keyhole=document.getElementById('adminKeyhole');
+  if(keyhole)keyhole.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openLogin();});
+  function openLogin(){ if(adminKey()){enterEdit();return;} if(!adlogin)return; adlogin.hidden=false;aderr.textContent='';adpw.value='';setTimeout(function(){adpw.focus();},30); }
+  if(adlogin){
+    document.getElementById('adcancel').addEventListener('click',function(){adlogin.hidden=true;});
+    document.getElementById('adgo').addEventListener('click',doLogin);
+    adpw.addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+    adlogin.addEventListener('click',function(e){if(e.target===adlogin)adlogin.hidden=true;});
+  }
+  function doLogin(){
+    var k=adpw.value.trim(); if(!k)return; aderr.textContent='Checking…';
+    fetch('/api/admin',{headers:{'x-admin-key':k}}).then(function(r){
+      if(r.ok){setAdminKey(k);adlogin.hidden=true;showLauncher();enterEdit();}
+      else{aderr.textContent='Wrong password.';}
+    }).catch(function(){aderr.textContent='Try again.';});
+  }
+
+  function showLauncher(){ if(document.getElementById('edLaunch')||document.body.classList.contains('editing'))return;
+    var b=document.createElement('button');b.id='edLaunch';b.className='edLaunch';b.textContent='✎ Edit page';
+    b.addEventListener('click',enterEdit);document.body.appendChild(b); }
+  function hideLauncher(){var l=document.getElementById('edLaunch');if(l)l.remove();}
+  if(adminKey())showLauncher();
+
+  function resizeImg(file,max,q,cb){
+    var img=new Image(),url=URL.createObjectURL(file);
+    img.onload=function(){var w=img.width,h=img.height,s=Math.min(1,max/Math.max(w,h));
+      var c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);cb(c.toDataURL('image/jpeg',q));};
+    img.onerror=function(){URL.revokeObjectURL(url);};img.src=url;
+  }
+  function pickImage(el,key){
+    var inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+    inp.onchange=function(){var f=inp.files&&inp.files[0];if(!f)return;resizeImg(f,1400,0.72,function(u){if(el.tagName==='IMG')el.src=u;else el.style.backgroundImage='url("'+u+'")';dirty[key]=u;updateBar();});};
+    inp.click();
+  }
+  function cleanHTML(el){
+    var tmp=el.cloneNode(true),ok={EM:1,B:1,STRONG:1,I:1,BR:1,A:1};
+    Array.prototype.slice.call(tmp.querySelectorAll('*')).forEach(function(n){
+      if(!ok[n.tagName]){var p=n.parentNode;while(n.firstChild)p.insertBefore(n.firstChild,n);p.removeChild(n);}
+      else{Array.prototype.slice.call(n.attributes).forEach(function(a){if(!(n.tagName==='A'&&a.name==='href'))n.removeAttribute(a.name);});}
+    });
+    return tmp.innerHTML.replace(/\s+/g,' ').trim();
+  }
+  function enterEdit(){
+    if(!adminKey())return; hideLauncher(); document.body.classList.add('editing');
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      el.setAttribute('contenteditable','true'); el.setAttribute('spellcheck','false');
+      el.addEventListener('input',onInput);
+      el.addEventListener('keydown',function(e){if(e.key==='Enter'&&/^(H1|H2|H3|H4|CITE|SPAN)$/.test(el.tagName)){e.preventDefault();el.blur();}});
+    });
+    document.querySelectorAll('[data-edit-img]').forEach(function(el){el.addEventListener('click',onImgClick);});
+    buildBar();
+  }
+  function onInput(e){var el=e.currentTarget;dirty[el.getAttribute('data-edit')]=cleanHTML(el);updateBar();}
+  function onImgClick(e){ if(!document.body.classList.contains('editing'))return; e.preventDefault();e.stopPropagation(); pickImage(e.currentTarget,e.currentTarget.getAttribute('data-edit-img')); }
+  function buildBar(){
+    if(document.getElementById('edbar'))return;
+    var bar=document.createElement('div');bar.className='edbar';bar.id='edbar';
+    bar.innerHTML='<span class="lbl">Editing</span><button id="edSave" class="primary" disabled>Save</button><button id="edDone">Done</button><a class="edlink" href="/admin.html" target="_blank" rel="noopener">Submissions ↗</a><button id="edLogout" class="edlink">Log out</button>';
+    document.body.appendChild(bar);
+    document.getElementById('edSave').addEventListener('click',saveEdits);
+    document.getElementById('edDone').addEventListener('click',doneEdits);
+    document.getElementById('edLogout').addEventListener('click',function(){setAdminKey(null);location.reload();});
+  }
+  function updateBar(){var s=document.getElementById('edSave');if(!s)return;var n=Object.keys(dirty).length;s.disabled=!n;s.textContent=n?('Save · '+n):'Save';}
+  function doneEdits(){
+    if(Object.keys(dirty).length){ if(!confirm('Discard unsaved changes?'))return; location.reload(); return; }
+    document.body.classList.remove('editing');
+    document.querySelectorAll('[data-edit]').forEach(function(el){el.removeAttribute('contenteditable');});
+    var b=document.getElementById('edbar');if(b)b.remove(); showLauncher();
+  }
+  function saveEdits(){
+    var s=document.getElementById('edSave');s.disabled=true;s.textContent='Saving…';
+    fetch('/api/content',{method:'POST',headers:{'x-admin-key':adminKey(),'Content-Type':'application/json'},body:JSON.stringify({updates:dirty})})
+      .then(function(r){return r.json();}).then(function(res){
+        if(res&&res.success){location.reload();}
+        else if(res&&res.error==='unauthorized'){alert('Please log in again.');setAdminKey(null);location.reload();}
+        else{s.disabled=false;s.textContent='Save';alert('Save failed. Try again.');}
+      }).catch(function(){s.disabled=false;s.textContent='Save';alert('Network error while saving.');});
+  }
 })();
 </script>
 
