@@ -574,6 +574,8 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
 body.editing [data-edit]{outline:1px dashed rgba(232,193,90,.45);outline-offset:4px;border-radius:2px;cursor:text;transition:outline-color .2s,background .2s}
 body.editing [data-edit]:hover{outline-color:var(--brass);background:rgba(232,193,90,.05)}
 body.editing [data-edit]:focus{outline:2px solid var(--brass);background:rgba(232,193,90,.06)}
+/* keep the element's own color when the browser inserts styled spans/fonts while typing */
+body.editing [contenteditable="true"] span,body.editing [contenteditable="true"] font{color:inherit!important;-webkit-text-fill-color:inherit!important;background:transparent!important}
 body.editing [data-edit-img]{outline:2px dashed var(--brass);outline-offset:3px;cursor:pointer}
 body.editing [data-edit-img]:hover{outline-style:solid;filter:brightness(.82)}
 .edbar{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:1200;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(12,20,32,.97);border:1px solid var(--line);border-radius:12px;padding:10px 14px;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
@@ -1463,6 +1465,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     if(Object.keys(dirty).length){ if(!confirm('Discard unsaved changes?'))return; location.reload(); return; }
     document.body.classList.remove('editing');
     document.querySelectorAll('[data-edit]').forEach(function(el){el.removeAttribute('contenteditable');});
+    applyContent();
     renderGallery();
     var b=document.getElementById('edbar');if(b)b.remove(); showLauncher();
   }
