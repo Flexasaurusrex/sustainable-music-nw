@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
       const arr = (o && o.result) || [];
       const content = {};
       for (let i = 0; i < arr.length; i += 2) content[arr[i]] = arr[i + 1];
-      res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=60');
+      res.setHeader('Cache-Control', 's-maxage=5, stale-while-revalidate=30');
       res.status(200).json({ content });
     } catch (e) { res.status(500).json({ error: 'read failed' }); }
     return;

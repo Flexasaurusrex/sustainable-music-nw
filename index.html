@@ -1400,7 +1400,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     var s=document.getElementById('edSave');s.disabled=true;s.textContent='Saving…';
     fetch('/api/content',{method:'POST',headers:{'x-admin-key':adminKey(),'Content-Type':'application/json'},body:JSON.stringify({updates:dirty})})
       .then(function(r){return r.json();}).then(function(res){
-        if(res&&res.success){location.reload();}
+        if(res&&res.success){ Object.keys(dirty).forEach(function(k){CONTENT[k]=dirty[k];}); dirty={}; s.textContent='Saved ✓'; setTimeout(function(){updateBar();},1300); }
         else if(res&&res.error==='unauthorized'){alert('Please log in again.');setAdminKey(null);location.reload();}
         else{s.disabled=false;s.textContent='Save';alert('Save failed. Try again.');}
       }).catch(function(){s.disabled=false;s.textContent='Save';alert('Network error while saving.');});
