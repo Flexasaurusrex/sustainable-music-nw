@@ -609,6 +609,8 @@ body.editing .gallery figcaption{opacity:1}
 .gal-add{break-inside:avoid;width:100%;min-height:130px;margin:0 0 14px;border:2px dashed var(--line);border-radius:4px;background:rgba(232,193,90,.04);color:var(--brass-text);font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;transition:background .2s,border-color .2s}
 .gal-add:hover,.gal-add.over{border-color:var(--brass);background:rgba(232,193,90,.12)}
 .gal-add.busy{opacity:.7;cursor:default}
+.gal-tools{display:flex;justify-content:flex-end;margin-bottom:16px}
+.gal-tools[hidden]{display:none}
 
 /* ============================================================
    REVEAL
@@ -871,7 +873,7 @@ body.editing .gallery figcaption{opacity:1}
     </div>
   </section>
   <section class="band band--tight" style="padding-top:clamp(30px,5vw,52px)">
-    <div class="wrap"><div class="gallery" id="galleryGrid"></div></div>
+    <div class="wrap"><div class="gal-tools" id="galTools" hidden><button class="btn btn--ghost btn--sm" id="galReset" type="button">↺ Reset to original photos</button></div><div class="gallery" id="galleryGrid"></div></div>
   </section>
 </main>
 
@@ -1199,7 +1201,8 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     {k:'gal_dsc',c:'A live moment'}
   ].filter(function(g){return IMAGES[g.k];});
   var galleryGrid=document.getElementById('galleryGrid');
-  var galItems=GALLERY.map(function(g){return {src:'b:'+g.k,cap:g.c};});
+  function galDefault(){return GALLERY.map(function(g){return {src:'b:'+g.k,cap:g.c};});}
+  var galItems=galDefault();
   var lbi=0,dragI=null;
   function galEsc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function galResolve(src){ if(!src)return ''; if(src.indexOf('u:')===0)return '/api/photo?id='+encodeURIComponent(src.slice(2)); if(src.indexOf('b:')===0)return IMAGES[src.slice(2)]||''; if(/^https?:|^data:/.test(src))return src; return IMAGES[src]||''; }
@@ -1208,6 +1211,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   function renderGallery(){
     if(!galleryGrid)return;
     var ed=document.body.classList.contains('editing');
+    var tools=document.getElementById('galTools'); if(tools)tools.hidden=!ed;
     galleryGrid.innerHTML=galItems.map(function(it,i){
       return '<figure data-i="'+i+'">'
         +'<img src="'+galResolve(it.src)+'" alt="'+galEsc(it.cap)+'" loading="lazy">'
@@ -1251,6 +1255,8 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
         }).catch(function(){if(add){add.classList.remove('busy');add.textContent='+ Add photos';}alert('Upload error.');});
     });
   }
+  var galResetBtn=document.getElementById('galReset');
+  if(galResetBtn)galResetBtn.addEventListener('click',function(){ if(!confirm('Reset the gallery to the original photos? This clears added photos, captions, and custom order.'))return; galItems=galDefault(); galDirty(); renderGallery(); });
   var lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg'),lbCap=document.getElementById('lbCap');
   function openLb(i){ if(!galItems.length)return; lbi=(i+galItems.length)%galItems.length; var it=galItems[lbi]; lbImg.src=galResolve(it.src); lbImg.alt=it.cap||''; lbCap.textContent=it.cap||''; lb.hidden=false; document.body.style.overflow='hidden'; }
   function closeLb(){lb.hidden=true;document.body.style.overflow='';}
