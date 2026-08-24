@@ -613,6 +613,35 @@ body.editing .gallery figcaption{opacity:1}
 .gal-add.busy{opacity:.7;cursor:default}
 .gal-tools{display:flex;justify-content:flex-end;margin-bottom:16px}
 .gal-tools[hidden]{display:none}
+.ev-add-btn{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:11px 18px;border-radius:4px;border:1px solid var(--brass);background:var(--brass);color:#0a0a0b;cursor:pointer;margin-left:auto}
+.ev-add-btn[hidden]{display:none}
+.evcard{position:relative}
+.ev-adm{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:4;opacity:0;transition:opacity .2s}
+body.editing .evcard:hover .ev-adm{opacity:1}
+.ev-adm button{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:4px;border:1px solid var(--line);background:rgba(6,8,11,.88);color:var(--brass);cursor:pointer}
+.ev-adm .ev-edit:hover{background:var(--brass);color:#0a0a0b}
+.ev-adm .ev-del:hover{background:#c0392b;color:#fff;border-color:#c0392b}
+.evcard__nolink{display:none}
+@media(max-width:760px){.evcard__nolink{display:block}}
+.evform{position:fixed;inset:0;z-index:1300;background:rgba(6,8,11,.72);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);overflow:auto}
+.evform[hidden]{display:none}
+.evform__box{width:520px;max-width:100%;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.evform__t{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--cream);margin-bottom:18px}
+.evform__grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.evform__grid .full{grid-column:1/-1}
+.evform__grid label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--panel-mute)}
+.evform__grid input{background:rgba(8,9,11,.5);border:1px solid var(--harbor-line);border-radius:5px;padding:11px 12px;color:var(--cream);font-family:var(--sans);font-size:1rem;letter-spacing:normal;text-transform:none}
+.evform__grid input:focus{outline:none;border-color:var(--brass)}
+.ef-imgrow{display:flex;align-items:center;gap:12px}
+.ef-imgbtn{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;border-radius:5px;border:1px dashed var(--brass);background:transparent;color:var(--brass);cursor:pointer}
+.ef-imgbtn:hover{background:rgba(232,193,90,.12)}
+.ef-imgstate{font-family:var(--mono);font-size:.66rem;color:var(--brass-text);letter-spacing:.06em}
+.evform__row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.evform__row button{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;padding:12px 20px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--cream);cursor:pointer}
+.evform__row button.primary{background:var(--brass);color:#0a0a0b;border-color:var(--brass)}
+.evform__row button:disabled{opacity:.5;cursor:default}
+.evform__err{font-family:var(--mono);font-size:.66rem;color:#e8896a;margin-top:12px;min-height:1em;letter-spacing:.04em}
+@media(max-width:560px){.evform__grid{grid-template-columns:1fr}}
 
 /* ============================================================
    REVEAL
@@ -828,6 +857,7 @@ body.editing .gallery figcaption{opacity:1}
           </button>
         </div>
         <span class="evcount" id="evCount"></span>
+        <button class="ev-add-btn" id="evAddBtn" type="button" hidden>+ Add event</button>
       </div>
     </div>
   </section>
@@ -981,6 +1011,26 @@ body.editing .gallery figcaption{opacity:1}
   </div>
 </div>
 
+<!-- ================= EVENT FORM ================= -->
+<div class="evform" id="evform" hidden>
+  <div class="evform__box">
+    <div class="evform__t" id="evformTitle">Add event</div>
+    <div class="evform__grid">
+      <label class="full">Title<input id="ef-t" type="text" placeholder="Event / act name"></label>
+      <label>Date<input id="ef-date" type="date"></label>
+      <label>Tag<input id="ef-tag" type="text" placeholder="Live Set"></label>
+      <label>Start time<input id="ef-start" type="time"></label>
+      <label>End time<input id="ef-end" type="time"></label>
+      <label class="full">Venue<input id="ef-v" type="text" placeholder="Venue name"></label>
+      <label class="full">Address<input id="ef-a" type="text" placeholder="Street, neighborhood"></label>
+      <label class="full">Details / tickets link (optional)<input id="ef-url" type="url" placeholder="https://…"></label>
+      <div class="full ef-imgrow"><button type="button" id="ef-img-btn" class="ef-imgbtn">Upload flyer…</button><span class="ef-imgstate" id="ef-imgstate"></span></div>
+    </div>
+    <div class="evform__err" id="ef-err"></div>
+    <div class="evform__row"><button id="ef-cancel" type="button">Cancel</button><button id="ef-save" class="primary" type="button">Save event</button></div>
+  </div>
+</div>
+
 <!-- ================= LIGHTBOX ================= -->
 <div class="lightbox" id="lightbox" hidden>
   <button class="lb__close" id="lbClose" aria-label="Close">&#10005;</button>
@@ -1061,8 +1111,9 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   function fmtTime(d){var h=d.getHours(),m=d.getMinutes(),ap=h<12?'AM':'PM';h=h%12||12;return h+(m?':'+('0'+m).slice(-2):'')+' '+ap;}
   function evImgSrc(ev){
     if(!ev.img) return null;
+    if(ev.img.indexOf('u:')===0) return '/api/photo?id='+encodeURIComponent(ev.img.slice(2));
     if(IMAGES[ev.img]) return IMAGES[ev.img];
-    if(/^https?:/.test(ev.img)) return ev.img;
+    if(/^https?:|^data:/.test(ev.img)) return ev.img;
     return null;
   }
   function evThumb(ev){
@@ -1071,13 +1122,14 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     return '<div class="evcard__thumb ph" role="img" aria-label="'+ev.t+'"></div>';
   }
   function evCardHTML(ev,i){
-    var d=pd(ev.s),d2=pd(ev.e);
+    var d=pd(ev.s),d2=pd(ev.e),ed=document.body.classList.contains('editing');
     return '<article class="evcard reveal" style="--d:'+(i*0.05)+'s">'
       +'<div class="evcard__date"><div class="mo">'+MON[d.getMonth()]+'</div><div class="d">'+d.getDate()+'</div><div class="dow">'+DOW[d.getDay()]+'</div></div>'
-      +'<div class="evcard__body"><div class="tag">'+ev.tag+'</div><h3>'+ev.t+'</h3>'
-      +'<div class="evcard__meta"><span>◷ '+fmtTime(d)+' – '+fmtTime(d2)+'</span><span>◉ '+ev.v+(ev.a?', '+ev.a:'')+'</span></div></div>'
+      +'<div class="evcard__body"><div class="tag">'+galEsc(ev.tag)+'</div><h3>'+galEsc(ev.t)+'</h3>'
+      +'<div class="evcard__meta"><span>◷ '+fmtTime(d)+' – '+fmtTime(d2)+'</span><span>◉ '+galEsc(ev.v)+(ev.a?', '+galEsc(ev.a):'')+'</span></div></div>'
       +evThumb(ev)
-      +'<a class="btn btn--ghost btn--sm" href="'+ev.url+'" target="_blank" rel="noopener">Details</a>'
+      +(ev.url?'<a class="btn btn--ghost btn--sm" href="'+galEsc(ev.url)+'" target="_blank" rel="noopener">Details</a>':'<span class="evcard__nolink" aria-hidden="true"></span>')
+      +(ed&&ev.manual?'<div class="ev-adm"><button class="ev-edit" type="button" data-id="'+galEsc(ev.id)+'">Edit</button><button class="ev-del" type="button" data-id="'+galEsc(ev.id)+'">Delete</button></div>':'')
       +'</article>';
   }
   function thumbErrors(scope){
@@ -1119,10 +1171,69 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     evList.innerHTML=EVENTS.map(evCardHTML).join('');
     thumbErrors(evList);
     document.getElementById('evCount').textContent=EVENTS.length+' upcoming';
+    var ed=document.body.classList.contains('editing');
+    var ab=document.getElementById('evAddBtn'); if(ab)ab.hidden=!ed;
+    if(ed){
+      evList.querySelectorAll('.ev-edit').forEach(function(b){b.addEventListener('click',function(){openEventForm(b.getAttribute('data-id'));});});
+      evList.querySelectorAll('.ev-del').forEach(function(b){b.addEventListener('click',function(){delEvent(b.getAttribute('data-id'));});});
+    }
   }
   function renderAll(){
     renderList();nextUp();
     if(calWrap.style.display!=='none'){buildCal();}
+  }
+
+  /* ---------- admin: add / edit / delete events ---------- */
+  function efVal(id){var el=document.getElementById(id);return el?(el.value||'').trim():'';}
+  function refreshEvents(){ fetch('/api/events').then(function(r){return r.json();}).then(function(d){if(d&&d.events){EVENTS=d.events;computeRange();renderAll();}}).catch(function(){}); }
+  var efImg='', efEditId=null, evformEl=document.getElementById('evform');
+  function openEventForm(id){
+    efEditId=id||null;
+    var ev=id?EVENTS.filter(function(e){return e.manual&&e.id===id;})[0]:null;
+    document.getElementById('evformTitle').textContent=ev?'Edit event':'Add event';
+    document.getElementById('ef-t').value=ev?ev.t:'';
+    document.getElementById('ef-date').value=ev&&ev.s?ev.s.slice(0,10):'';
+    document.getElementById('ef-start').value=ev&&ev.s?ev.s.slice(11,16):'';
+    document.getElementById('ef-end').value=ev&&ev.e?ev.e.slice(11,16):'';
+    document.getElementById('ef-v').value=ev?ev.v:'';
+    document.getElementById('ef-a').value=ev?ev.a:'';
+    document.getElementById('ef-tag').value=ev?ev.tag:'';
+    document.getElementById('ef-url').value=ev?ev.url:'';
+    efImg=ev&&ev.img?ev.img:'';
+    document.getElementById('ef-imgstate').textContent=efImg?'✓ flyer set':'';
+    document.getElementById('ef-err').textContent='';
+    if(evformEl)evformEl.hidden=false;
+  }
+  function saveEvent(){
+    var t=efVal('ef-t'),date=efVal('ef-date');
+    if(!t||!date){document.getElementById('ef-err').textContent='Title and date are required.';return;}
+    var start=efVal('ef-start')||'19:00',end=efVal('ef-end')||start;
+    var ev={t:t,s:date+'T'+start,e:date+'T'+end,v:efVal('ef-v'),a:efVal('ef-a'),tag:efVal('ef-tag')||'Live Set',url:efVal('ef-url'),img:efImg};
+    if(efEditId)ev.id=efEditId;
+    var btn=document.getElementById('ef-save');btn.disabled=true;btn.textContent='Saving…';
+    fetch('/api/events',{method:'POST',headers:{'x-admin-key':adminKey(),'Content-Type':'application/json'},body:JSON.stringify({action:efEditId?'update':'add',event:ev})})
+      .then(function(r){return r.json();}).then(function(res){
+        btn.disabled=false;btn.textContent='Save event';
+        if(res&&res.success){if(evformEl)evformEl.hidden=true;refreshEvents();}
+        else{document.getElementById('ef-err').textContent=(res&&res.error)||'Save failed.';}
+      }).catch(function(){btn.disabled=false;btn.textContent='Save event';document.getElementById('ef-err').textContent='Network error.';});
+  }
+  function delEvent(id){
+    if(!confirm('Delete this event?'))return;
+    fetch('/api/events',{method:'POST',headers:{'x-admin-key':adminKey(),'Content-Type':'application/json'},body:JSON.stringify({action:'delete',id:id})})
+      .then(function(r){return r.json();}).then(function(res){if(res&&res.success)refreshEvents();else alert('Delete failed.');}).catch(function(){alert('Network error.');});
+  }
+  if(evformEl){
+    document.getElementById('ef-cancel').addEventListener('click',function(){evformEl.hidden=true;});
+    document.getElementById('ef-save').addEventListener('click',saveEvent);
+    evformEl.addEventListener('click',function(e){if(e.target===evformEl)evformEl.hidden=true;});
+    document.getElementById('ef-img-btn').addEventListener('click',function(){
+      var inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+      inp.onchange=function(){var f=inp.files&&inp.files[0];if(!f)return;var st=document.getElementById('ef-imgstate');st.textContent='Uploading…';
+        resizeImg(f,1200,0.72,function(dataUri){fetch('/api/upload',{method:'POST',headers:{'x-admin-key':adminKey(),'Content-Type':'application/json'},body:JSON.stringify({image:dataUri})}).then(function(r){return r.json();}).then(function(res){if(res&&res.id){efImg='u:'+res.id;st.textContent='✓ flyer set';}else st.textContent='upload failed';}).catch(function(){st.textContent='upload error';});});
+      };inp.click();
+    });
+    var evAddB=document.getElementById('evAddBtn'); if(evAddB)evAddB.addEventListener('click',function(){openEventForm(null);});
   }
 
   /* ---------- events: list/calendar toggle ---------- */
@@ -1446,7 +1557,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
       el.addEventListener('keydown',function(e){if(e.key==='Enter'&&/^(H1|H2|H3|H4|CITE|SPAN)$/.test(el.tagName)){e.preventDefault();el.blur();}});
     });
     document.querySelectorAll('[data-edit-img]').forEach(function(el){el.addEventListener('click',onImgClick);});
-    renderGallery();
+    renderGallery();renderAll();
     buildBar();
   }
   function onInput(e){var el=e.currentTarget;dirty[el.getAttribute('data-edit')]=cleanHTML(el);updateBar();}
@@ -1466,7 +1577,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     document.body.classList.remove('editing');
     document.querySelectorAll('[data-edit]').forEach(function(el){el.removeAttribute('contenteditable');});
     applyContent();
-    renderGallery();
+    renderGallery();renderAll();
     var b=document.getElementById('edbar');if(b)b.remove(); showLauncher();
   }
   function saveEdits(){
