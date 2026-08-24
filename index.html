@@ -642,6 +642,21 @@ body.editing .evcard:hover .ev-adm{opacity:1}
 .evform__row button:disabled{opacity:.5;cursor:default}
 .evform__err{font-family:var(--mono);font-size:.66rem;color:#e8896a;margin-top:12px;min-height:1em;letter-spacing:.04em}
 @media(max-width:560px){.evform__grid{grid-template-columns:1fr}}
+.evdetail{position:fixed;inset:0;z-index:1300;background:rgba(6,8,11,.9);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);overflow:auto}
+.evdetail[hidden]{display:none}
+.evdetail__box{position:relative;width:840px;max-width:100%;background:var(--night);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.evdetail__media{background:var(--harbor);min-height:320px;display:flex;align-items:center;justify-content:center}
+.evdetail__media img{width:100%;height:100%;object-fit:cover;max-height:74vh}
+.evdetail__seal{width:60%;aspect-ratio:1;background:var(--logo) center/contain no-repeat}
+.evdetail__info{padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;justify-content:center}
+.evdetail__tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-text);margin-bottom:12px}
+.evdetail__title{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,3.4vw,2.6rem);color:var(--cream);margin:0 0 18px;line-height:1.05}
+.evdetail__meta{display:flex;flex-direction:column;gap:9px;color:var(--panel-mute);font-size:1rem}
+.evdetail__meta .evd-date{color:var(--cream);font-weight:600}
+.evdetail__link{margin-top:22px}
+.evdetail__close{position:absolute;top:12px;right:14px;z-index:2;background:rgba(6,8,11,.6);border:0;color:#f3edde;font-size:1.05rem;width:34px;height:34px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
+.evdetail__close:hover{color:var(--brass)}
+@media(max-width:680px){.evdetail__box{grid-template-columns:1fr;max-height:92vh;overflow:auto}.evdetail__media{min-height:220px}}
 
 /* ============================================================
    REVEAL
@@ -1011,6 +1026,20 @@ body.editing .evcard:hover .ev-adm{opacity:1}
   </div>
 </div>
 
+<!-- ================= EVENT DETAILS ================= -->
+<div class="evdetail" id="evdetail" hidden>
+  <div class="evdetail__box">
+    <button class="evdetail__close" id="evdClose" aria-label="Close">&#10005;</button>
+    <div class="evdetail__media" id="evdMedia"></div>
+    <div class="evdetail__info">
+      <div class="evdetail__tag" id="evdTag"></div>
+      <h3 class="evdetail__title" id="evdTitle"></h3>
+      <div class="evdetail__meta" id="evdMeta"></div>
+      <div class="evdetail__link" id="evdLink"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ================= EVENT FORM ================= -->
 <div class="evform" id="evform" hidden>
   <div class="evform__box">
@@ -1116,6 +1145,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     if(/^https?:|^data:/.test(ev.img)) return ev.img;
     return null;
   }
+  function evKey(ev){return ev.id?('id:'+ev.id):((ev.s||'')+'|'+(ev.t||''));}
   function evThumb(ev){
     var src=evImgSrc(ev);
     if(src) return '<img class="evcard__thumb" src="'+src+'" alt="'+ev.t+' flyer" loading="lazy">';
@@ -1128,7 +1158,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
       +'<div class="evcard__body"><div class="tag">'+galEsc(ev.tag)+'</div><h3>'+galEsc(ev.t)+'</h3>'
       +'<div class="evcard__meta"><span>◷ '+fmtTime(d)+' – '+fmtTime(d2)+'</span><span>◉ '+galEsc(ev.v)+(ev.a?', '+galEsc(ev.a):'')+'</span></div></div>'
       +evThumb(ev)
-      +(ev.url?'<a class="btn btn--ghost btn--sm" href="'+galEsc(ev.url)+'" target="_blank" rel="noopener">Details</a>':'<span class="evcard__nolink" aria-hidden="true"></span>')
+      +'<button class="btn btn--ghost btn--sm ev-details" type="button" data-evk="'+galEsc(evKey(ev))+'">Details</button>'
       +(ed&&ev.manual?'<div class="ev-adm"><button class="ev-edit" type="button" data-id="'+galEsc(ev.id)+'">Edit</button><button class="ev-del" type="button" data-id="'+galEsc(ev.id)+'">Delete</button></div>':'')
       +'</article>';
   }
@@ -1171,12 +1201,19 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     evList.innerHTML=EVENTS.map(evCardHTML).join('');
     thumbErrors(evList);
     document.getElementById('evCount').textContent=EVENTS.length+' upcoming';
+    requestAnimationFrame(function(){revealIn(evList);});
+    wireEvDetails(evList);
     var ed=document.body.classList.contains('editing');
     var ab=document.getElementById('evAddBtn'); if(ab)ab.hidden=!ed;
     if(ed){
       evList.querySelectorAll('.ev-edit').forEach(function(b){b.addEventListener('click',function(){openEventForm(b.getAttribute('data-id'));});});
       evList.querySelectorAll('.ev-del').forEach(function(b){b.addEventListener('click',function(){delEvent(b.getAttribute('data-id'));});});
     }
+  }
+  function wireEvDetails(scope){
+    scope.querySelectorAll('.ev-details').forEach(function(b){b.addEventListener('click',function(){
+      var k=b.getAttribute('data-evk');var ev=EVENTS.filter(function(e){return evKey(e)===k;})[0];if(ev)openEvDetail(ev);
+    });});
   }
   function renderAll(){
     renderList();nextUp();
@@ -1236,6 +1273,29 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     var evAddB=document.getElementById('evAddBtn'); if(evAddB)evAddB.addEventListener('click',function(){openEventForm(null);});
   }
 
+  /* ---------- event details lightbox ---------- */
+  var evdEl=document.getElementById('evdetail');
+  function closeEvDetail(){ if(evdEl){evdEl.hidden=true;document.body.style.overflow='';} }
+  function openEvDetail(ev){
+    if(!evdEl)return;
+    var d=pd(ev.s),d2=pd(ev.e),src=evImgSrc(ev);
+    var FULLDAY=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    var FULLMON=["January","February","March","April","May","June","July","August","September","October","November","December"];
+    document.getElementById('evdMedia').innerHTML=src?'<img src="'+src+'" alt="'+galEsc(ev.t)+' flyer">':'<div class="evdetail__seal" role="img" aria-label="Sustainable Music NW"></div>';
+    document.getElementById('evdTag').textContent=ev.tag||'';
+    document.getElementById('evdTitle').textContent=ev.t||'';
+    document.getElementById('evdMeta').innerHTML='<div class="evd-date">'+FULLDAY[d.getDay()]+', '+FULLMON[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+'</div>'
+      +'<div>◷ '+fmtTime(d)+' – '+fmtTime(d2)+'</div>'
+      +'<div>◉ '+galEsc(ev.v)+(ev.a?', '+galEsc(ev.a):'')+'</div>';
+    document.getElementById('evdLink').innerHTML=ev.url?'<a class="btn btn--solid btn--sm" href="'+galEsc(ev.url)+'" target="_blank" rel="noopener">Details &amp; tickets ↗</a>':'';
+    evdEl.hidden=false;document.body.style.overflow='hidden';
+  }
+  if(evdEl){
+    document.getElementById('evdClose').addEventListener('click',closeEvDetail);
+    evdEl.addEventListener('click',function(e){if(e.target===evdEl)closeEvDetail();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!evdEl.hidden)closeEvDetail();});
+  }
+
   /* ---------- events: list/calendar toggle ---------- */
   var segList=document.getElementById('segList'),segCal=document.getElementById('segCal');
   var listWrap=document.getElementById('evListWrap'),calWrap=document.getElementById('evCalWrap');
@@ -1286,7 +1346,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     if(!parts){det.innerHTML='';return;}
     var evs=EVENTS.filter(function(ev){var d=pd(ev.s);return d.getFullYear()===parts[0]&&d.getMonth()===parts[1]&&d.getDate()===parts[2];});
     det.innerHTML=evs.map(function(ev,i){return evCardHTML(ev,i);}).join('');
-    thumbErrors(det);revealIn(det);
+    thumbErrors(det);revealIn(det);wireEvDetails(det);
   }
   document.getElementById('calPrev').addEventListener('click',function(){if(calY*12+calM>minYM){calM--;if(calM<0){calM=11;calY--;}selKey=null;buildCal();}});
   document.getElementById('calNext').addEventListener('click',function(){if(calY*12+calM<maxYM){calM++;if(calM>11){calM=0;calY++;}selKey=null;buildCal();}});
