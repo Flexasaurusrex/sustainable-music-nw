@@ -74,32 +74,35 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  // GET — merged upcoming list
-  let feed = [];
+  // GET — merged upcoming + past
+  const mapFeed = (e) => {
+    const loc = e.location || {};
+    return {
+      t: e.title, s: toPT(e.startDate), e: toPT(e.endDate),
+      v: (loc.addressTitle || '').trim() || 'Seattle', a: (loc.addressLine1 || '').trim(),
+      tag: tagFor(e.title || '', loc.addressTitle || ''), img: e.assetUrl || null,
+      url: 'https://www.sustainablemusicnw.org' + (e.fullUrl || ''), manual: false,
+    };
+  };
+  let feedUp = [], feedPast = [];
   try {
     const r = await fetch('https://www.sustainablemusicnw.org/events?format=json-pretty', {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SMNW-site/1.0)' },
     });
     if (r.ok) {
       const data = await r.json();
-      feed = (data.upcoming || []).map((e) => {
-        const loc = e.location || {};
-        return {
-          t: e.title, s: toPT(e.startDate), e: toPT(e.endDate),
-          v: (loc.addressTitle || '').trim() || 'Seattle', a: (loc.addressLine1 || '').trim(),
-          tag: tagFor(e.title || '', loc.addressTitle || ''), img: e.assetUrl || null,
-          url: 'https://www.sustainablemusicnw.org' + (e.fullUrl || ''), manual: false,
-        };
-      });
+      feedUp = (data.upcoming || []).map(mapFeed);
+      feedPast = (data.past || []).map(mapFeed);
     }
   } catch (e) { /* feed optional */ }
 
   const manual = await getManual();
   const cutoff = todayPT();
-  const all = feed.concat(manual)
-    .filter((e) => e && e.s && e.s.slice(0, 10) >= cutoff)
-    .sort((a, b) => (a.s < b.s ? -1 : a.s > b.s ? 1 : 0));
+  const asc = (a, b) => (a.s < b.s ? -1 : a.s > b.s ? 1 : 0);
+  const desc = (a, b) => (a.s < b.s ? 1 : a.s > b.s ? -1 : 0);
+  const upcoming = feedUp.concat(manual).filter((e) => e && e.s && e.s.slice(0, 10) >= cutoff).sort(asc);
+  const past = feedPast.concat(manual.filter((e) => e.s && e.s.slice(0, 10) < cutoff)).filter((e) => e && e.s).sort(desc);
 
   res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=300');
-  res.status(200).json({ events: all, source: 'live+manual' });
+  res.status(200).json({ events: upcoming, past, source: 'live+manual' });
 };

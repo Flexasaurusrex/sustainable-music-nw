@@ -615,6 +615,8 @@ body.editing .gallery figcaption{opacity:1}
 .gal-tools[hidden]{display:none}
 .ev-add-btn{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:11px 18px;border-radius:4px;border:1px solid var(--brass);background:var(--brass);color:#0a0a0b;cursor:pointer;margin-left:auto}
 .ev-add-btn[hidden]{display:none}
+.evpast-note{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:0 0 clamp(20px,3vw,30px)}
+.evpast-empty{color:var(--slate);text-align:center;padding:40px}
 .evcard{position:relative}
 .ev-adm{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:4;opacity:0;transition:opacity .2s}
 body.editing .evcard:hover .ev-adm{opacity:1}
@@ -870,6 +872,9 @@ body.editing .evcard:hover .ev-adm{opacity:1}
           <button id="segCal" data-ev="cal" role="tab">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M2 6h12M6 1.5v3M10 1.5v3"/></svg>Calendar
           </button>
+          <button id="segPast" data-ev="past" role="tab">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4v4l3 2"/><circle cx="8" cy="8" r="6.2"/></svg>Past
+          </button>
         </div>
         <span class="evcount" id="evCount"></span>
         <button class="ev-add-btn" id="evAddBtn" type="button" hidden>+ Add event</button>
@@ -894,6 +899,10 @@ body.editing .evcard:hover .ev-adm{opacity:1}
             <div id="calDetail"></div>
           </div>
         </div>
+      </div>
+      <div id="evPastWrap" style="display:none">
+        <p class="evpast-note">A record of past Sustainable Music NW events across Seattle.</p>
+        <div class="evlist" id="evPast"></div>
       </div>
     </div>
   </section>
@@ -1171,6 +1180,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     });
   }
   var evList=document.getElementById('evList');
+  var PAST=[];
 
   /* ---------- calendar state (range derives from live data) ---------- */
   var calY,calM,minYM,maxYM,selKey=null;
@@ -1218,11 +1228,12 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   function renderAll(){
     renderList();nextUp();
     if(calWrap.style.display!=='none'){buildCal();}
+    if(pastWrap&&pastWrap.style.display!=='none'){renderPast();}
   }
 
   /* ---------- admin: add / edit / delete events ---------- */
   function efVal(id){var el=document.getElementById(id);return el?(el.value||'').trim():'';}
-  function refreshEvents(){ fetch('/api/events').then(function(r){return r.json();}).then(function(d){if(d&&d.events){EVENTS=d.events;computeRange();renderAll();}}).catch(function(){}); }
+  function refreshEvents(){ fetch('/api/events').then(function(r){return r.json();}).then(function(d){if(d&&d.events){EVENTS=d.events;PAST=d.past||[];computeRange();renderAll();}}).catch(function(){}); }
   var efImg='', efEditId=null, evformEl=document.getElementById('evform');
   function openEventForm(id){
     efEditId=id||null;
@@ -1296,17 +1307,28 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!evdEl.hidden)closeEvDetail();});
   }
 
-  /* ---------- events: list/calendar toggle ---------- */
-  var segList=document.getElementById('segList'),segCal=document.getElementById('segCal');
-  var listWrap=document.getElementById('evListWrap'),calWrap=document.getElementById('evCalWrap');
+  /* ---------- events: list / calendar / past toggle ---------- */
+  var segList=document.getElementById('segList'),segCal=document.getElementById('segCal'),segPast=document.getElementById('segPast');
+  var listWrap=document.getElementById('evListWrap'),calWrap=document.getElementById('evCalWrap'),pastWrap=document.getElementById('evPastWrap');
+  var evPast=document.getElementById('evPast');
+  function renderPast(){
+    if(!evPast)return;
+    if(!PAST.length){evPast.innerHTML='<p class="evpast-empty">Past events will appear here as they are added.</p>';return;}
+    evPast.innerHTML=PAST.map(evCardHTML).join('');
+    thumbErrors(evPast);requestAnimationFrame(function(){revealIn(evPast);});wireEvDetails(evPast);
+  }
   function showEv(mode){
-    var cal=mode==='cal';
-    segCal.classList.toggle('on',cal);segList.classList.toggle('on',!cal);
-    calWrap.style.display=cal?'block':'none';listWrap.style.display=cal?'none':'block';
-    if(cal){buildCal();} else {revealIn(listWrap);}
+    var cal=mode==='cal',past=mode==='past',list=!cal&&!past;
+    segList.classList.toggle('on',list);segCal.classList.toggle('on',cal);if(segPast)segPast.classList.toggle('on',past);
+    listWrap.style.display=list?'block':'none';
+    calWrap.style.display=cal?'block':'none';
+    if(pastWrap)pastWrap.style.display=past?'block':'none';
+    document.getElementById('evCount').textContent=past?(PAST.length+' past'):(EVENTS.length+' upcoming');
+    if(cal){buildCal();} else if(past){renderPast();} else {revealIn(listWrap);}
   }
   segList.addEventListener('click',function(){showEv('list');});
   segCal.addEventListener('click',function(){showEv('cal');});
+  if(segPast)segPast.addEventListener('click',function(){showEv('past');});
 
   /* ---------- calendar ---------- */
   function buildCal(){
@@ -1354,7 +1376,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   /* ---------- initial render + live sync from /api/events ---------- */
   computeRange();renderAll();
   fetch('/api/events').then(function(r){return r.json();}).then(function(d){
-    if(d&&d.events&&d.events.length){EVENTS=d.events;computeRange();renderAll();}
+    if(d&&d.events){EVENTS=d.events;PAST=d.past||[];computeRange();renderAll();}
   }).catch(function(){});
 
   /* ---------- gallery + lightbox ---------- */
