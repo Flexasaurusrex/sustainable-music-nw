@@ -81,13 +81,13 @@ module.exports = async function handler(req, res) {
       t: e.title, s: toPT(e.startDate), e: toPT(e.endDate),
       v: (loc.addressTitle || '').trim() || 'Seattle', a: (loc.addressLine1 || '').trim(),
       tag: tagFor(e.title || '', loc.addressTitle || ''), img: e.assetUrl || null,
-      url: 'https://www.sustainablemusicnw.org' + (e.fullUrl || ''), manual: false,
+      url: 'https://cinnamon-asparagus-bb6t.squarespace.com' + (e.fullUrl || ''), manual: false,
     };
   };
   let feedUp = [], feedPast = [];
   try {
-    const r = await fetch('https://www.sustainablemusicnw.org/events?format=json-pretty', {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SMNW-site/1.0)' },
+    const r = await fetch('https://cinnamon-asparagus-bb6t.squarespace.com/events?format=json-pretty', {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36' },
     });
     if (r.ok) {
       const data = await r.json();
