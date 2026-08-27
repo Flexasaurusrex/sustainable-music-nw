@@ -75,11 +75,14 @@ module.exports = async function handler(req, res) {
   }
 
   // GET — merged upcoming + past
+  const dec = (s) => (s == null ? '' : String(s))
+    .replace(/&#39;/g, "'").replace(/&apos;/g, "'").replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
   const mapFeed = (e) => {
     const loc = e.location || {};
     return {
-      t: e.title, s: toPT(e.startDate), e: toPT(e.endDate),
-      v: (loc.addressTitle || '').trim() || 'Seattle', a: (loc.addressLine1 || '').trim(),
+      t: dec(e.title), s: toPT(e.startDate), e: toPT(e.endDate),
+      v: dec((loc.addressTitle || '').trim()) || 'Seattle', a: dec((loc.addressLine1 || '').trim()),
       tag: tagFor(e.title || '', loc.addressTitle || ''), img: e.assetUrl || null,
       url: 'https://cinnamon-asparagus-bb6t.squarespace.com' + (e.fullUrl || ''), manual: false,
     };

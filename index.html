@@ -631,7 +631,7 @@ body.editing .evcard:hover .ev-adm{opacity:1}
 .evform__t{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--cream);margin-bottom:18px}
 .evform__grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .evform__grid .full{grid-column:1/-1}
-.evform__grid label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--panel-mute)}
+.evform__grid label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
 .evform__grid input{background:rgba(8,9,11,.5);border:1px solid var(--harbor-line);border-radius:5px;padding:11px 12px;color:var(--cream);font-family:var(--sans);font-size:1rem;letter-spacing:normal;text-transform:none}
 .evform__grid input:focus{outline:none;border-color:var(--brass)}
 .ef-imgrow{display:flex;align-items:center;gap:12px}
@@ -653,7 +653,8 @@ body.editing .evcard:hover .ev-adm{opacity:1}
 .evdetail__info{padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;justify-content:center}
 .evdetail__tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-text);margin-bottom:12px}
 .evdetail__title{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,3.4vw,2.6rem);color:var(--cream);margin:0 0 18px;line-height:1.05}
-.evdetail__meta{display:flex;flex-direction:column;gap:9px;color:var(--panel-mute);font-size:1rem}
+.evdetail__box{color:var(--paper)}
+.evdetail__meta{display:flex;flex-direction:column;gap:9px;color:var(--slate);font-size:1rem}
 .evdetail__meta .evd-date{color:var(--cream);font-weight:600}
 .evdetail__link{margin-top:22px}
 .evdetail__close{position:absolute;top:12px;right:14px;z-index:2;background:rgba(6,8,11,.6);border:0;color:#f3edde;font-size:1.05rem;width:34px;height:34px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
@@ -872,9 +873,6 @@ body.editing .evcard:hover .ev-adm{opacity:1}
           <button id="segCal" data-ev="cal" role="tab">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M2 6h12M6 1.5v3M10 1.5v3"/></svg>Calendar
           </button>
-          <button id="segPast" data-ev="past" role="tab">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4v4l3 2"/><circle cx="8" cy="8" r="6.2"/></svg>Past
-          </button>
         </div>
         <span class="evcount" id="evCount"></span>
         <button class="ev-add-btn" id="evAddBtn" type="button" hidden>+ Add event</button>
@@ -900,14 +898,19 @@ body.editing .evcard:hover .ev-adm{opacity:1}
           </div>
         </div>
       </div>
-      <div id="evPastWrap" style="display:none">
-        <p class="evpast-note">A record of past Sustainable Music NW events across Seattle.</p>
-        <div class="evlist" id="evPast"></div>
-      </div>
     </div>
   </section>
 
-  <section class="band band--night" style="text-align:center">
+  <section class="band band--night" id="pastEvents">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-edit="past.eyebrow">Proof of work</p>
+      <h2 class="h-section reveal" data-edit="past.heading" style="margin-bottom:.9rem">Past events.</h2>
+      <p class="evpast-note reveal" id="pastCount">A record of past Sustainable Music NW events across Seattle.</p>
+      <div class="evlist reveal" id="evPast" style="margin-top:clamp(24px,4vw,40px)"></div>
+    </div>
+  </section>
+
+  <section class="band" style="text-align:center">
     <div class="wrap">
       <p class="eyebrow center reveal" data-edit="ey6">Seattle artists</p>
       <h2 class="reveal" style="--d:.05s;font-size:clamp(1.8rem,4vw,2.8rem);max-width:18ch;margin:0 auto 1.4rem" data-edit="c42">Want to play a future event?</h2>
@@ -1228,7 +1231,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   function renderAll(){
     renderList();nextUp();
     if(calWrap.style.display!=='none'){buildCal();}
-    if(pastWrap&&pastWrap.style.display!=='none'){renderPast();}
+    renderPast();
   }
 
   /* ---------- admin: add / edit / delete events ---------- */
@@ -1308,27 +1311,26 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
   }
 
   /* ---------- events: list / calendar / past toggle ---------- */
-  var segList=document.getElementById('segList'),segCal=document.getElementById('segCal'),segPast=document.getElementById('segPast');
-  var listWrap=document.getElementById('evListWrap'),calWrap=document.getElementById('evCalWrap'),pastWrap=document.getElementById('evPastWrap');
+  var segList=document.getElementById('segList'),segCal=document.getElementById('segCal');
+  var listWrap=document.getElementById('evListWrap'),calWrap=document.getElementById('evCalWrap');
   var evPast=document.getElementById('evPast');
   function renderPast(){
     if(!evPast)return;
-    if(!PAST.length){evPast.innerHTML='<p class="evpast-empty">Past events will appear here as they are added.</p>';return;}
+    var pc=document.getElementById('pastCount');
+    if(!PAST.length){evPast.innerHTML='';if(pc)pc.textContent='A record of past Sustainable Music NW events across Seattle.';return;}
+    if(pc)pc.textContent=PAST.length+' past events across Seattle, most recent first.';
     evPast.innerHTML=PAST.map(evCardHTML).join('');
     thumbErrors(evPast);requestAnimationFrame(function(){revealIn(evPast);});wireEvDetails(evPast);
   }
   function showEv(mode){
-    var cal=mode==='cal',past=mode==='past',list=!cal&&!past;
-    segList.classList.toggle('on',list);segCal.classList.toggle('on',cal);if(segPast)segPast.classList.toggle('on',past);
-    listWrap.style.display=list?'block':'none';
-    calWrap.style.display=cal?'block':'none';
-    if(pastWrap)pastWrap.style.display=past?'block':'none';
-    document.getElementById('evCount').textContent=past?(PAST.length+' past'):(EVENTS.length+' upcoming');
-    if(cal){buildCal();} else if(past){renderPast();} else {revealIn(listWrap);}
+    var cal=mode==='cal';
+    segCal.classList.toggle('on',cal);segList.classList.toggle('on',!cal);
+    calWrap.style.display=cal?'block':'none';listWrap.style.display=cal?'none':'block';
+    document.getElementById('evCount').textContent=EVENTS.length+' upcoming';
+    if(cal){buildCal();} else {revealIn(listWrap);}
   }
   segList.addEventListener('click',function(){showEv('list');});
   segCal.addEventListener('click',function(){showEv('cal');});
-  if(segPast)segPast.addEventListener('click',function(){showEv('past');});
 
   /* ---------- calendar ---------- */
   function buildCal(){
