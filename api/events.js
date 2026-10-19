@@ -84,7 +84,7 @@ module.exports = async function handler(req, res) {
       t: dec(e.title), s: toPT(e.startDate), e: toPT(e.endDate),
       v: dec((loc.addressTitle || '').trim()) || 'Seattle', a: dec((loc.addressLine1 || '').trim()),
       tag: tagFor(e.title || '', loc.addressTitle || ''), img: e.assetUrl || null,
-      url: 'https://cinnamon-asparagus-bb6t.squarespace.com' + (e.fullUrl || ''), manual: false,
+      url: '', manual: false,
     };
   };
   let feedUp = [], feedPast = [];

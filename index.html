@@ -561,9 +561,10 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.03;margin:0;co
 .foot__nav{display:flex;gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase}
 .foot__nav a{color:var(--slate);cursor:pointer;transition:color .2s}
 .foot__nav a:hover{color:var(--brass-text)}
-.foot__soc{display:flex;gap:12px}
+.foot__soc{display:flex;gap:12px;flex-wrap:wrap}
 .foot__soc a{color:var(--slate);border:1px solid var(--line);padding:10px 15px;border-radius:2px;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;transition:all .2s}
 .foot__soc a:hover{color:var(--brass-text);border-color:var(--brass-text)}
+.foot__soc a.foot__mail{text-transform:none;letter-spacing:.02em}
 .foot__bottom{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;color:var(--slate-dim);text-transform:uppercase;align-items:center}
 
 /* ============================================================
@@ -604,7 +605,8 @@ body.editing [data-edit-img]:hover{outline-style:solid;filter:brightness(.82)}
 body.editing .gallery figure.dragging{opacity:.35}
 body.editing .gallery figure.drop-t{outline:2px solid var(--brass);outline-offset:2px}
 body.editing .gallery img{cursor:pointer}
-body.editing .gallery figcaption{opacity:1}
+body.editing .gallery figcaption{opacity:1;min-height:2.6em;cursor:text}
+body.editing .gallery figcaption:empty::before{content:'+ Add caption';opacity:.55}
 .gal-del{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(6,8,11,.82);color:#fff;font-size:.72rem;cursor:pointer;display:grid;place-items:center;z-index:3;opacity:0;transition:opacity .2s,background .2s}
 .gallery figure:hover .gal-del{opacity:1}
 .gal-del:hover{background:#c0392b}
@@ -739,7 +741,7 @@ body.editing .evcard:hover .ev-adm{opacity:1}
     <div class="wrap nextup__in">
       <div class="nextup__l"><span class="nextup__lab"><i class="pulse"></i>Next up</span><span class="nextup__cd" id="nextupWhen"></span></div>
       <div class="nextup__m"><h3 id="nextupTitle" data-edit="c4"></h3><span id="nextupMeta"></span></div>
-      <div class="nextup__r"><a class="btn btn--solid btn--sm" id="nextupBtn" target="_blank" rel="noopener">Details</a><a class="btn btn--ghost btn--sm" data-go="events" data-edit="b2">All events</a></div>
+      <div class="nextup__r"><a class="btn btn--solid btn--sm" id="nextupBtn" href="#">Details</a><a class="btn btn--ghost btn--sm" data-go="events" data-edit="b2">All events</a></div>
     </div>
   </section>
 
@@ -840,7 +842,7 @@ body.editing .evcard:hover .ev-adm{opacity:1}
       <p class="phead__ey reveal" data-edit="pe1">Our approach</p>
       <h1 class="reveal" style="--d:.05s" data-edit="c30">Music, brought to <em>where the community already is.</em></h1>
       <p class="reveal" style="--d:.1s" data-edit="c31">We don't just put on concerts. We empower neighborhoods to create their own vibrant gatherings, and we make the music profession viable while we do it.</p>
-      <figure class="figure appr-hero reveal" style="--d:.15s"><img id="apprHero" data-edit-img="img.approach.hero" alt="A Sustainable Music NW community concert"><figcaption>Community concert · Fremont Brewing · photo Giao Nguyen</figcaption></figure>
+      <figure class="figure appr-hero reveal" style="--d:.15s"><img id="apprHero" data-edit-img="img.approach.hero" alt="A Sustainable Music NW community concert"><figcaption data-edit="cap.approach.hero">Community concert · Fremont Brewing · photo Giao Nguyen</figcaption></figure>
     </div>
   </section>
 
@@ -1121,6 +1123,7 @@ body.editing .evcard:hover .ev-adm{opacity:1}
         <a data-go="home">Home</a><a data-go="approach">Our Approach</a><a data-go="events">Events</a><a data-go="gallery">Gallery</a><a data-go="about">About</a><a data-go="donate">Donate</a>
       </div>
       <div class="foot__soc">
+        <a class="foot__mail" href="mailto:info@sustainablemusicnw.org">info@sustainablemusicnw.org</a>
         <a href="https://instagram.com/sustainablemusicnw" target="_blank" rel="noopener">Instagram</a>
         <a href="https://facebook.com/SustainableMusicNorthwest" target="_blank" rel="noopener">Facebook</a>
         <a href="https://youtube.com/@SustainableMusicNorthwest" target="_blank" rel="noopener">YouTube</a>
@@ -1168,12 +1171,12 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
 
   /* ---------- events data ---------- */
   var EVENTS=[
-    {t:"Tezcon 26",s:"2026-07-11T16:00",e:"2026-07-11T20:00",v:"Artspace Hiawatha Lofts",a:"843 Hiawatha Pl S",tag:"Festival",img:"flyer_tezcon",url:"https://www.sustainablemusicnw.org/events/tezcon-26"},
-    {t:"Global Heat",s:"2026-07-16T18:30",e:"2026-07-16T20:00",v:"Jefferson Park Amphitheater",a:"3801 Beacon Ave S",tag:"Jefferson Park Series",img:"flyer_jefferson",url:"https://www.sustainablemusicnw.org/events/global-heat"},
-    {t:"Wasabi Samba",s:"2026-07-23T18:30",e:"2026-07-23T19:30",v:"Jefferson Park Amphitheater",a:"3801 Beacon Ave S",tag:"Jefferson Park Series",img:"flyer_jefferson",url:"https://www.sustainablemusicnw.org/events/global-heat-273ls"},
-    {t:"Tim Kennedy's Cosmic Wonder",s:"2026-07-26T14:00",e:"2026-07-26T17:00",v:"West Seattle",a:"7315 12th Ave SW",tag:"Live Set",img:null,url:"https://www.sustainablemusicnw.org/events/tim-kennedys-cosmic-wonder"},
-    {t:"Accendino",s:"2026-07-30T18:30",e:"2026-07-30T19:30",v:"Jefferson Park Amphitheater",a:"3801 Beacon Ave S",tag:"Jefferson Park Series",img:"flyer_jefferson",url:"https://www.sustainablemusicnw.org/events/global-heat-273ls-7lyt4"},
-    {t:"Steve Aliment & Annie O'Niell",s:"2026-08-06T18:30",e:"2026-08-06T19:30",v:"Jefferson Park Amphitheater",a:"3801 Beacon Ave S",tag:"Jefferson Park Series",img:"flyer_jefferson",url:"https://www.sustainablemusicnw.org/events/global-heat-273ls-7lyt4-nf48m"}
+    {t:"Tezcon 26",s:"2026-07-11T16:00",e:"2026-07-11T20:00",v:"Artspace Hiawatha Lofts",a:"843 Hiawatha Pl S",tag:"Festival",img:"flyer_tezcon",url:""},
+    {t:"Global Heat",s:"2026-07-16T18:30",e:"2026-07-16T20:00",v:"Jefferson Park Amphitheater",a:"3801 Beacon Ave S",tag:"Jefferson Park Series",img:"flyer_jefferson",url:""},
+    {t:"Wasabi Samba",s:"2026-07-23T18:30",e:"2026-07-23T19:30",v:"Jefferson Park Amphitheater",a:"3801 Beacon Ave S",tag:"Jefferson Park Series",img:"flyer_jefferson",url:""},
+    {t:"Tim Kennedy's Cosmic Wonder",s:"2026-07-26T14:00",e:"2026-07-26T17:00",v:"West Seattle",a:"7315 12th Ave SW",tag:"Live Set",img:null,url:""},
+    {t:"Accendino",s:"2026-07-30T18:30",e:"2026-07-30T19:30",v:"Jefferson Park Amphitheater",a:"3801 Beacon Ave S",tag:"Jefferson Park Series",img:"flyer_jefferson",url:""},
+    {t:"Steve Aliment & Annie O'Niell",s:"2026-08-06T18:30",e:"2026-08-06T19:30",v:"Jefferson Park Amphitheater",a:"3801 Beacon Ave S",tag:"Jefferson Park Series",img:"flyer_jefferson",url:""}
   ];
   var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   var DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -1236,7 +1239,7 @@ var IMAGES={"kevin": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEKRXh
     document.getElementById('nextupWhen').textContent=when;
     document.getElementById('nextupTitle').textContent=ev.t;
     document.getElementById('nextupMeta').textContent=MON[d.getMonth()]+' '+d.getDate()+' · '+fmtTime(d)+' · '+ev.v;
-    document.getElementById('nextupBtn').href=ev.url;
+    document.getElementById('nextupBtn').onclick=function(e){e.preventDefault();openEvDetail(ev);};
     box.hidden=false;
   }
   function renderList(){
